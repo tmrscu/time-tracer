@@ -21,7 +21,7 @@ export default function Home() {
     return <div></div>;
   }
   return (
-    <div className={styles.container}>
+    <div className={styles.container} >
       <Box color={"primary"}>HOMEPAGE</Box>
     </div>
   );

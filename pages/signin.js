@@ -48,7 +48,7 @@ const SignIn = () => {
   };
 
   return (
-    <Box minH="100vh" py="12" px={{ base: "4", lg: "8" }} bg="gray.50">
+    <Box minH="100vh" py="12" px={{ base: "4", lg: "8" }} bg="black">
       <Box maxW="md" mx="auto">
         <Heading textAlign="center" m="6">
           Sign In
