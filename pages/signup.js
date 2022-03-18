@@ -17,6 +17,11 @@ import { useState } from "react";
 import { supabaseClient } from "../utils/client";
 
 const SignUp = () => {
+  const [fname, setFName] = useState("");
+  const [lname, setLName] = useState("");
+  const [country, setCountry] = useState("");
+  const [role, setRole] = useState("");
+  const [industry, setIndustry] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +37,15 @@ const SignUp = () => {
       const { user, session, error } = await supabaseClient.auth.signUp({
         email,
         password,
+      },
+      {
+        data: {
+          last_name: lname,
+          first_name: fname,
+          country: country,
+          role: role,
+          industry: industry,
+        }
       });
       if (error) {
         setError(error.message);
@@ -76,8 +90,63 @@ const SignUp = () => {
           ) : (
             <chakra.form onSubmit={submitHandler}>
               <Stack spacing="6">
+              <FormControl id="fname">
+                  <FormLabel>First Name</FormLabel>
+                  <Input
+                    name="fname"
+                    type="fname"
+                    autoComplete="fname"
+                    required
+                    value={fname}
+                    onChange={(e) => setFName(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="lname">
+                  <FormLabel>Last Name</FormLabel>
+                  <Input
+                    name="lname"
+                    type="lname"
+                    autoComplete="lname"
+                    required
+                    value={lname}
+                    onChange={(e) => setLName(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="country">
+                  <FormLabel>Country</FormLabel>
+                  <Input
+                    name="country"
+                    type="country"
+                    autoComplete="country"
+                    required
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="role">
+                  <FormLabel>Role</FormLabel>
+                  <Input
+                    name="role"
+                    type="role"
+                    autoComplete="role"
+                    required
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="industry">
+                  <FormLabel>Industry</FormLabel>
+                  <Input
+                    name="industry"
+                    type="industry"
+                    autoComplete="industry"
+                    required
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                  />
+                </FormControl>
                 <FormControl id="email">
-                  <FormLabel>Email address</FormLabel>
+                  <FormLabel>Email Address</FormLabel>
                   <Input
                     name="email"
                     type="email"
@@ -105,11 +174,11 @@ const SignUp = () => {
                   fontSize="md"
                   isLoading={isLoading}
                 >
-                  Sign in
+                  Sign Up
                 </Button>
               </Stack>
               <Text>
-                Already have an account?
+                Already have an account?{" "}
                 <Link href="/signin">
                   <a>Sign In</a>
                 </Link>
