@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }) {
           const userId = signedInUser.id;
           supabaseClient
             .from("profiles")
-            .upsert({ id: userId })
+            .upsert({ profile_id: userId })
             .then((_data, error) => {
               if (!error) {
                 router.push("/");

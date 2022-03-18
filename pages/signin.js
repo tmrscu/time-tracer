@@ -102,13 +102,13 @@ const SignIn = () => {
                   fontSize="md"
                   isLoading={isLoading}
                 >
-                  Sign in
+                  Sign In
                 </Button>
               </Stack>
               <Text>
                 No account?{" "}
                 <Link href="/signup">
-                  <a>Signup</a>
+                  <a>Sign Up</a>
                 </Link>
               </Text>
             </chakra.form>
