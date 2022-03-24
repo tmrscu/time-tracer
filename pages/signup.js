@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   chakra,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -34,19 +35,21 @@ const SignUp = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user, session, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-      },
-      {
-        data: {
-          last_name: lname,
-          first_name: fname,
-          country: country,
-          role: role,
-          industry: industry,
+      const { user, session, error } = await supabaseClient.auth.signUp(
+        {
+          email,
+          password,
+        },
+        {
+          data: {
+            last_name: lname,
+            first_name: fname,
+            country: country,
+            role: role,
+            industry: industry,
+          },
         }
-      });
+      );
       if (error) {
         setError(error.message);
       } else {
@@ -64,12 +67,52 @@ const SignUp = () => {
     setEmail(event.target.value);
   };
 
+  const handleReset = () => {
+    setFName("");
+    setLName("");
+    setCountry("");
+    setRole("");
+    setIndustry("");
+    setEmail("");
+    setPassword("");
+  };
+
   return (
-    <Box minH="100vh" py="12" px={{ base: "4", lg: "8" }} bg="gray.50">
+    <Box
+      minH="100vh"
+      py="6"
+      px={{ base: "4", lg: "8" }}
+      bgGradient="linear(to-tr, #6772E5, rgb(112, 167, 248, 0.58))"
+    >
+      <Flex justify="space-between" alignItems='center' pb={12}>
+        <Box><Heading size='xl'>Time Tracer</Heading></Box>
+        <Box>
+          <Button
+            border="1px"
+            bg="none"
+            color="black"
+            borderRadius={2}
+            fontSize="md"
+            mr={2}
+          >
+            <Link href="/signup">
+              <a>Sign Up</a>
+            </Link>
+          </Button>
+          <Button
+            border="1px"
+            bg="none"
+            color="black"
+            borderRadius={2}
+            fontSize="md"
+          >
+            <Link href="/signin">
+              <a>Sign In</a>
+            </Link>
+          </Button>
+        </Box>
+      </Flex>
       <Box maxW="md" mx="auto">
-        <Heading textAlign="center" m="6">
-          Sign Up
-        </Heading>
         {error && (
           <Alert status="error" mb="6">
             <AlertIcon />
@@ -82,6 +125,7 @@ const SignUp = () => {
           shadow="base"
           rounded={{ sm: "lg" }}
           bg="white"
+          minW="600px"
         >
           {isSubmitted ? (
             <Heading size="md" textAlign="center" color="gray.600">
@@ -89,9 +133,20 @@ const SignUp = () => {
             </Heading>
           ) : (
             <chakra.form onSubmit={submitHandler}>
-              <Stack spacing="6">
-              <FormControl id="fname">
-                  <FormLabel>First Name</FormLabel>
+              <Heading textAlign="center" m="6">
+                Sign Up
+              </Heading>
+              <Text align="center" pb={6}>
+                Sign Up for your free Time Tracer account
+              </Text>
+              <Stack spacing="3">
+                <FormControl id="fname">
+                  <FormLabel>
+                    First Name{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="fname"
                     type="fname"
@@ -102,7 +157,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="lname">
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>
+                    Last Name{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="lname"
                     type="lname"
@@ -113,7 +173,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="country">
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>
+                    Country{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="country"
                     type="country"
@@ -124,7 +189,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="role">
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>
+                    Role{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="role"
                     type="role"
@@ -135,7 +205,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="industry">
-                  <FormLabel>Industry</FormLabel>
+                  <FormLabel>
+                    Industry{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="industry"
                     type="industry"
@@ -146,7 +221,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="email">
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>
+                    Email Address{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="email"
                     type="email"
@@ -157,7 +237,12 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <FormControl id="password">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>
+                    Password{" "}
+                    <Text as="span" color="red.500">
+                      *
+                    </Text>
+                  </FormLabel>
                   <Input
                     name="password"
                     type="password"
@@ -167,20 +252,35 @@ const SignUp = () => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </FormControl>
-                <Button
-                  type="submit"
-                  colorScheme="blue"
-                  size="lg"
-                  fontSize="md"
-                  isLoading={isLoading}
-                >
-                  Sign Up
-                </Button>
+                <Flex justify="space-between" gap={6}>
+                  <Button
+                    type="submit"
+                    bg="purple.400"
+                    color="white"
+                    borderRadius={2}
+                    fontSize="md"
+                    flexGrow={1}
+                    isLoading={isLoading}
+                  >
+                    Sign Up
+                  </Button>
+                  <Button
+                    type="button"
+                    bg="black"
+                    color="white"
+                    borderRadius={2}
+                    fontSize="md"
+                    flexGrow={1}
+                    onClick={handleReset}
+                  >
+                    Reset
+                  </Button>
+                </Flex>
               </Stack>
-              <Text>
+              <Text textAlign={'center'} mt={6}>
                 Already have an account?{" "}
                 <Link href="/signin">
-                  <a>Sign In</a>
+                  <a><b>Sign In</b></a>
                 </Link>
               </Text>
             </chakra.form>

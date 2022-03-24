@@ -14,16 +14,7 @@ function MyApp({ Component, pageProps }) {
         handleAuthSession(event, session);
         // If signed in - push to home page
         if (event === "SIGNED_IN") {
-          const signedInUser = supabaseClient.auth.user();
-          const userId = signedInUser.id;
-          supabaseClient
-            .from("profiles")
-            .upsert({ profile_id: userId })
-            .then((_data, error) => {
-              if (!error) {
-                router.push("/");
-              }
-            });
+          router.push("/");
         }
         // If signed out, push to sign in page
         if (event === "SIGNED_OUT") {
