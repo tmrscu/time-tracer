@@ -3,6 +3,17 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 
+import { extendTheme } from "@chakra-ui/react";
+
+const theme = extendTheme({
+  colors: {
+    brand: {
+      primary: "#635BFF",
+      text: "#1D1D1D",
+    },
+  },
+});
+
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const user = supabaseClient.auth.user();
@@ -49,29 +60,8 @@ function MyApp({ Component, pageProps }) {
   };
 
   return (
-    <ChakraProvider>
-      <Component {...pageProps} />
-    </ChakraProvider>
-  );
-}
-
-// 1. Import the extendTheme function
-import { extendTheme } from "@chakra-ui/react";
-
-// 2. Extend the theme to include custom colors, fonts, etc
-const colors = {
-  brand: {
-    primary: "red.500",
-  },
-};
-
-const theme = extendTheme({ colors });
-
-// 3. Pass the `theme` prop to the `ChakraProvider`
-function App() {
-  return (
     <ChakraProvider theme={theme}>
-      <App />
+      <Component {...pageProps} />
     </ChakraProvider>
   );
 }
