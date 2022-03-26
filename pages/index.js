@@ -1,9 +1,10 @@
-import { useState} from 'react'
-import { useRouter} from "next/router";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 import styles from "../styles/Home.module.css";
 import { Box } from "@chakra-ui/react";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   const router = useRouter();
@@ -24,9 +25,7 @@ export default function Home() {
   }, []);
 
   // NEEEd tyhis data
-  const fetchData = async () => {
-
-  };
+  const fetchData = async () => {};
 
   // Returns an empty div if theres no user
   // Prevents page flash
@@ -35,6 +34,7 @@ export default function Home() {
   }
   return (
     <div className={styles.container}>
+      <Navbar />
       <Box color={"primary"}>HOMEPAGE</Box>
       <Box>{JSON.stringify(data)}</Box>
       <Box>{JSON.stringify(taskType)}</Box>

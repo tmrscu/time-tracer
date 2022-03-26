@@ -13,6 +13,7 @@ import {
   Input,
   Stack,
   Text,
+  Container,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { supabaseClient } from "../utils/client";
@@ -84,27 +85,37 @@ const SignUp = () => {
       px={{ base: "4", lg: "8" }}
       bgGradient="linear(to-tr, #6772E5, rgb(112, 167, 248, 0.58))"
     >
-      <Flex justify="space-between" alignItems='center' pb={12}>
-        <Box><Heading size='xl'>Time Tracer</Heading></Box>
+      <Flex
+        direction={{ base: "column", sm: "row" }}
+        justify="space-between"
+        alignItems="center"
+        pb={12}
+      >
+        <Box>
+          <Heading size="xl" mb={4}>
+            Time Tracer
+          </Heading>
+        </Box>
         <Box>
           <Button
-            border="1px"
-            bg="none"
-            color="black"
+            bg={"purple.400"}
+            color="white"
+            rounded="sm"
             borderRadius={2}
             fontSize="md"
             mr={2}
+            _hover={{ bg: "purple.500" }}
           >
             <Link href="/signup">
               <a>Sign Up</a>
             </Link>
           </Button>
           <Button
-            border="1px"
             bg="none"
             color="black"
             borderRadius={2}
             fontSize="md"
+            _hover={{ bg: "purple.500", color: "white" }}
           >
             <Link href="/signin">
               <a>Sign In</a>
@@ -119,173 +130,171 @@ const SignUp = () => {
             <Text textAlign="center">{error}</Text>
           </Alert>
         )}
-        <Box
-          py="8"
-          px={{ base: "4", md: "10" }}
-          shadow="base"
-          rounded={{ sm: "lg" }}
-          bg="white"
-          minW="600px"
-        >
-          {isSubmitted ? (
-            <Heading size="md" textAlign="center" color="gray.600">
-              Please check {email} for login link
+        <Container centerContent p={0}>
+          <chakra.form
+            onSubmit={submitHandler}
+            bg="white"
+            p={6}
+            rounded="lg"
+            w={{ base: "full", md: "2xl" }}
+          >
+            <Heading textAlign="center" mb={4}>
+              Sign Up
             </Heading>
-          ) : (
-            <chakra.form onSubmit={submitHandler}>
-              <Heading textAlign="center" m="6">
-                Sign Up
-              </Heading>
-              <Text align="center" pb={6}>
-                Sign Up for your free Time Tracer account
-              </Text>
-              <Stack spacing="3">
-                <FormControl id="fname">
-                  <FormLabel>
-                    First Name{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="fname"
-                    type="fname"
-                    autoComplete="fname"
-                    required
-                    value={fname}
-                    onChange={(e) => setFName(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="lname">
-                  <FormLabel>
-                    Last Name{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="lname"
-                    type="lname"
-                    autoComplete="lname"
-                    required
-                    value={lname}
-                    onChange={(e) => setLName(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="country">
-                  <FormLabel>
-                    Country{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="country"
-                    type="country"
-                    autoComplete="country"
-                    required
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="role">
-                  <FormLabel>
-                    Role{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="role"
-                    type="role"
-                    autoComplete="role"
-                    required
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="industry">
-                  <FormLabel>
-                    Industry{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="industry"
-                    type="industry"
-                    autoComplete="industry"
-                    required
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="email">
-                  <FormLabel>
-                    Email Address{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="password">
-                  <FormLabel>
-                    Password{" "}
-                    <Text as="span" color="red.500">
-                      *
-                    </Text>
-                  </FormLabel>
-                  <Input
-                    name="password"
-                    type="password"
-                    autoComplete="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </FormControl>
-                <Flex justify="space-between" gap={6}>
-                  <Button
-                    type="submit"
-                    bg="purple.400"
-                    color="white"
-                    borderRadius={2}
-                    fontSize="md"
-                    flexGrow={1}
-                    isLoading={isLoading}
-                  >
-                    Sign Up
-                  </Button>
-                  <Button
-                    type="button"
-                    bg="black"
-                    color="white"
-                    borderRadius={2}
-                    fontSize="md"
-                    flexGrow={1}
-                    onClick={handleReset}
-                  >
-                    Reset
-                  </Button>
-                </Flex>
-              </Stack>
-              <Text textAlign={'center'} mt={6}>
-                Already have an account?{" "}
-                <Link href="/signin">
-                  <a><b>Sign In</b></a>
-                </Link>
-              </Text>
-            </chakra.form>
-          )}
-        </Box>
+            <Text align="center" pb={6}>
+              Sign Up for your free Time Tracer account
+            </Text>
+            <Stack spacing="3">
+              <FormControl id="fname">
+                <FormLabel>
+                  First Name{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="fname"
+                  type="fname"
+                  autoComplete="fname"
+                  required
+                  value={fname}
+                  onChange={(e) => setFName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="lname">
+                <FormLabel>
+                  Last Name{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="lname"
+                  type="lname"
+                  autoComplete="lname"
+                  required
+                  value={lname}
+                  onChange={(e) => setLName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="country">
+                <FormLabel>
+                  Country{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="country"
+                  type="country"
+                  autoComplete="country"
+                  required
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="role">
+                <FormLabel>
+                  Role{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="role"
+                  type="role"
+                  autoComplete="role"
+                  required
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="industry">
+                <FormLabel>
+                  Industry{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="industry"
+                  type="industry"
+                  autoComplete="industry"
+                  required
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="email">
+                <FormLabel>
+                  Email Address{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="password">
+                <FormLabel>
+                  Password{" "}
+                  <Text as="span" color="red.500">
+                    *
+                  </Text>
+                </FormLabel>
+                <Input
+                  name="password"
+                  type="password"
+                  autoComplete="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormControl>
+              <Flex justify="space-between" gap={6}>
+                <Button
+                  type="submit"
+                  bg="purple.400"
+                  color="white"
+                  borderRadius={2}
+                  fontSize="md"
+                  flexGrow={1}
+                  isLoading={isLoading}
+                  _hover={{ bg: "purple.500" }}
+                >
+                  Sign Up
+                </Button>
+                <Button
+                  type="button"
+                  bg="black"
+                  color="white"
+                  borderRadius={2}
+                  fontSize="md"
+                  flexGrow={1}
+                  onClick={handleReset}
+                  _hover={{ bg: "gray.500" }}
+                >
+                  Reset
+                </Button>
+              </Flex>
+            </Stack>
+            <Text textAlign={"center"} mt={6}>
+              Already have an account?
+              <br />
+              <Link href="/signin">
+                <a>
+                  <b>Sign In</b>
+                </a>
+              </Link>
+            </Text>
+          </chakra.form>
+        </Container>
       </Box>
     </Box>
   );
