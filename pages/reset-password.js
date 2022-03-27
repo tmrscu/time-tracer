@@ -54,7 +54,9 @@ const ResetPassword = () => {
         // sign user out supabase
         await supabaseClient.auth.signOut();
         // push user to signin page
-        router.push("/signin");
+        setTimeout(() => {
+          router.push("/signin");
+        }, 3000);
       }
     } catch (error) {
       setIsError(error.message);
