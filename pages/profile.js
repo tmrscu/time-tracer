@@ -25,8 +25,7 @@ import {
   useFocusEffect,
 } from "@chakra-ui/react";
 
-const Profile = ({}) => {
-  const user = supabaseClient.auth.user();
+const Profile = ({ user }) => {
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
   const [email, setEmail] = useState("");
@@ -317,6 +316,16 @@ function AlertDialogExample({ deleteProfile, isOpen, onOpen, onClose }) {
       </AlertDialog>
     </>
   );
+}
+
+export async function getServerSideProps({ req }) {
+  const { user } = await supabaseClient.auth.api.getUserByCookie(req);
+
+  if (!user) {
+    return { props: {}, redirect: { destination: "/signin" } };
+  }
+
+  return { props: { user } };
 }
 
 export default Profile;

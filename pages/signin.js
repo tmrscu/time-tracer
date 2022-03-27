@@ -41,8 +41,6 @@ const SignIn = () => {
           setEmail("");
           setPassword("");
         }, 3000);
-      } else {
-        setIsSubmitted(true);
       }
     } catch (error) {
       setError(error.message);
@@ -154,6 +152,13 @@ const SignIn = () => {
                 Sign In
               </Button>
             </Stack>
+            <Text textAlign={"center"} mt={6}>
+              <Link href="/reset">
+                <a>
+                  <b>Forgot Password?</b>
+                </a>
+              </Link>
+            </Text>
             <Text textAlign={"center"} mt={6}>
               Don&apos;t have an Account?
               <br />
