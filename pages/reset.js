@@ -27,7 +27,7 @@ const Reset = () => {
       setIsLoading(true);
       const { data, error } =
         await supabaseClient.auth.api.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: `https://timer-tracer.vercel.app/reset-password`,
         });
       if (error) {
         setIsError(error.message);
