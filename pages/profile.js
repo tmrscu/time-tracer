@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 import Navbar from "../components/Navbar";
 import {
@@ -13,6 +13,8 @@ import {
   Input,
   Button,
   Flex,
+  Alert,
+  AlertIcon,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -20,26 +22,95 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
+  useFocusEffect,
 } from "@chakra-ui/react";
 
-const Profile = () => {
+const Profile = ({}) => {
   const user = supabaseClient.auth.user();
-  const [fname, setFName] = useState(user?.user_metadata?.first_name);
-  const [lname, setLName] = useState(user?.user_metadata?.last_name);
-  const [email, setEmail] = useState(user?.email);
-  const [role, setRole] = useState(user?.user_metadata?.role);
-  const [industry, setIndustry] = useState(user?.user_metadata?.industry);
-  const [country, setCountry] = useState(user?.user_metadata?.country);
+  const [fname, setFName] = useState("");
+  const [lname, setLName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [country, setCountry] = useState("");
+  const [profileData, setProfileData] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  useEffect(() => {
+    // Store user profile data locally
+    const profileQueryData = getProfiles().then((results) => {
+      setProfileData(results[0]);
+      setFName(results[0].first_name);
+      setLName(results[0].last_name);
+      setEmail(results[0].email);
+      setRole(results[0].role);
+      setIndustry(results[0].industry);
+      setCountry(results[0].country);
+    });
+  }, []);
+
+  // Get user profile data from Supabase
+  const getProfiles = async () => {
+    let { data, error } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("profile_id", user?.id);
+
+    return data;
+  };
+
   const submitHandler = async (event) => {
     event.preventDefault();
-    console.log(fname, lname, email, role, industry, country);
-    // TODO: UPDATE USER DETAILS - Supabase Query
-    // Show an alert to the user that it was successful, an example of how to do this can be seen on signin.js line 24, line 40, line 105-110
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .update({
+          last_name: lname,
+          first_name: fname,
+          country: country,
+          role: role,
+          industry: industry,
+        })
+        .eq("profile_id", user?.id);
+      if (error) {
+        setError(error.message);
+        setTimeout(() => {
+          setError(null);
+          setLName(profileData.last_name);
+          setFName(profileData.first_name);
+          setCountry(profileData.country);
+          setRole(profileData.role);
+          setIndustry(profileData.industry);
+        }, 3000);
+      }
+      // if statement
+    } catch (error) {
+      setError(error.message);
+      setTimeout(() => {
+        setError(null);
+        setLName(profileData.last_name);
+        setFName(profileData.first_name);
+        setCountry(profileData.country);
+        setRole(profileData.role);
+        setIndustry(profileData.industry);
+      }, 3000);
+    } finally {
+      setIsLoading(false);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+      const profileQueryData = getProfiles().then((results) => {
+        setProfileData(results[0]);
+      });
+    }
   };
 
   const deleteProfile = async () => {
@@ -50,13 +121,21 @@ const Profile = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar profileData={profileData} />
       <Container centerContent maxW="container.md" p={10} mt={12}>
         <Box w="full" mb={12}>
           <Heading as="h2" size="lg" textAlign="left">
             Edit Profile
           </Heading>
         </Box>
+        {success && (
+          <Alert status="success" mb="6">
+            <AlertIcon />
+            <Text textAlign="center">
+              Your profile details were successfully updated.
+            </Text>
+          </Alert>
+        )}
         <Box w="full">
           <chakra.form
             onSubmit={submitHandler}
