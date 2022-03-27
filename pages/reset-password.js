@@ -101,7 +101,7 @@ const ResetPassword = () => {
           />
         </FormControl>
         <FormControl id="confirmPassword">
-          <FormLabel>Confirm Password</FormLabel>
+          <FormLabel mt={6}>Confirm Password</FormLabel>
           <Input
             name="confirm_password"
             type="password"
