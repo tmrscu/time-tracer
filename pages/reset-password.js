@@ -52,9 +52,10 @@ const ResetPassword = () => {
       } else {
         setIsSuccess(true);
         // sign user out supabase
-        await supabaseClient.auth.signOut();
-        // push user to signin page
         setTimeout(() => {
+          supabaseClient.auth.signOut();
+          // push user to signin page
+
           router.push("/signin");
         }, 3000);
       }
