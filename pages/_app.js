@@ -26,6 +26,7 @@ function MyApp({ Component, pageProps }) {
       (event, session) => {
         handleAuthSession(event, session);
         // If signed in - push to home page
+        console.log(router.pathname);
         if (event === "SIGNED_IN" && router.pathname !== "/reset-password") {
           router.push("/");
         }
