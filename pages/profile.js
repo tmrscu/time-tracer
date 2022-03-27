@@ -43,24 +43,23 @@ const Profile = ({}) => {
 
   useEffect(() => {
     // Store user profile data locally
-    const profileQueryData = getProfiles()
-      .then((results) => {
-        setProfileData(results[0]);
-        setFName(results[0].first_name);
-        setLName(results[0].last_name);
-        setEmail(results[0].email);
-        setRole(results[0].role);
-        setIndustry(results[0].industry);
-        setCountry(results[0].country);
-      });
-  },[]);
+    const profileQueryData = getProfiles().then((results) => {
+      setProfileData(results[0]);
+      setFName(results[0].first_name);
+      setLName(results[0].last_name);
+      setEmail(results[0].email);
+      setRole(results[0].role);
+      setIndustry(results[0].industry);
+      setCountry(results[0].country);
+    });
+  }, []);
 
   // Get user profile data from Supabase
   const getProfiles = async () => {
     let { data, error } = await supabaseClient
-      .from('profiles')
-      .select('*')
-      .eq('profile_id', user?.id);
+      .from("profiles")
+      .select("*")
+      .eq("profile_id", user?.id);
 
     return data;
   };
@@ -70,15 +69,16 @@ const Profile = ({}) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabaseClient.from('profiles')
-        .update({ 
-          last_name: lname, 
-          first_name: fname, 
-          country: country, 
-          role: role, 
-          industry: industry 
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .update({
+          last_name: lname,
+          first_name: fname,
+          country: country,
+          role: role,
+          industry: industry,
         })
-        .eq('profile_id', user?.id);
+        .eq("profile_id", user?.id);
       if (error) {
         setError(error.message);
         setTimeout(() => {
@@ -89,7 +89,7 @@ const Profile = ({}) => {
           setRole(profileData.role);
           setIndustry(profileData.industry);
         }, 3000);
-      } 
+      }
       // if statement
     } catch (error) {
       setError(error.message);
@@ -107,6 +107,9 @@ const Profile = ({}) => {
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
+      const profileQueryData = getProfiles().then((results) => {
+        setProfileData(results[0]);
+      });
     }
   };
 
@@ -118,7 +121,7 @@ const Profile = ({}) => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar profileData={profileData} />
       <Container centerContent maxW="container.md" p={10} mt={12}>
         <Box w="full" mb={12}>
           <Heading as="h2" size="lg" textAlign="left">
@@ -128,7 +131,9 @@ const Profile = ({}) => {
         {success && (
           <Alert status="success" mb="6">
             <AlertIcon />
-            <Text textAlign="center">Your profile details were successfully updated.</Text>
+            <Text textAlign="center">
+              Your profile details were successfully updated.
+            </Text>
           </Alert>
         )}
         <Box w="full">
