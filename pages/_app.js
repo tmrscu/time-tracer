@@ -1,7 +1,9 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
+import queryString from "query-string";
 
 import { extendTheme } from "@chakra-ui/react";
 
@@ -24,7 +26,7 @@ function MyApp({ Component, pageProps }) {
       (event, session) => {
         handleAuthSession(event, session);
         // If signed in - push to home page
-        if (event === "SIGNED_IN") {
+        if (event === "SIGNED_IN" && router.pathname !== "/reset-password") {
           router.push("/");
         }
         // If signed out, push to sign in page
@@ -41,13 +43,13 @@ function MyApp({ Component, pageProps }) {
 
   // Listen to any changes on router.pathname, user or router
   // If user is true, push to home page
-  useEffect(() => {
-    if (user) {
-      if (router.pathname === "/signin") {
-        router.push("/");
-      }
-    }
-  }, [router.pathname, user, router]);
+  // useEffect(() => {
+  //   if (user) {
+  //     if (router.pathname === "/signin") {
+  //       router.push("/");
+  //     }
+  //   }
+  // }, [router.pathname, user, router]);
 
   // Function to make the post request to AUTH api to set cookie
   const handleAuthSession = async (event, session) => {
