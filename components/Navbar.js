@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -14,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { supabaseClient } from "../utils/client";
 
-const Navbar = () => {
+const Navbar = ({ profileData }) => {
   const user = supabaseClient.auth.user();
 
   // Supabase logout function
@@ -22,7 +23,6 @@ const Navbar = () => {
     supabaseClient.auth.signOut();
   };
 
-  console.log(user);
   return (
     <Box
       bg="brand.primary"
@@ -51,7 +51,7 @@ const Navbar = () => {
         <Menu>
           <MenuButton>
             <Avatar
-              name={`${user?.user_metadata?.first_name} ${user?.user_metadata?.last_name}`}
+              name={`${profileData?.first_name} ${profileData?.last_name}`}
               as={Button}
               src="https://bit.ly/broken-link"
             />
@@ -62,7 +62,7 @@ const Navbar = () => {
               <Text
                 as="span"
                 color={"gray.700"}
-              >{`${user?.user_metadata?.first_name} ${user?.user_metadata?.last_name}`}</Text>
+              >{`${profileData?.first_name} ${profileData?.last_name}`}</Text>
             </Text>
             <Divider></Divider>
             <MenuItem _focus={{ bg: "purple.100" }} onClick={logout}>
