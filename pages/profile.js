@@ -37,6 +37,7 @@ const Profile = ({}) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -102,6 +103,10 @@ const Profile = ({}) => {
       }, 3000);
     } finally {
       setIsLoading(false);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
     }
   };
 
@@ -120,10 +125,10 @@ const Profile = ({}) => {
             Edit Profile
           </Heading>
         </Box>
-        {error && (
-          <Alert status="error" mb="6">
+        {success && (
+          <Alert status="success" mb="6">
             <AlertIcon />
-            <Text textAlign="center">{error}</Text>
+            <Text textAlign="center">Your profile details were successfully updated.</Text>
           </Alert>
         )}
         <Box w="full">
