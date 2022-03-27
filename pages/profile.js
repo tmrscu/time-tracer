@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/router";
 import { supabaseClient } from "../utils/client";
 import Navbar from "../components/Navbar";
 import {
@@ -26,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 
 const Profile = ({ user }) => {
+  const userData = supabaseClient.auth.user();
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,6 +39,8 @@ const Profile = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  const router = useRouter();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -113,8 +117,25 @@ const Profile = ({ user }) => {
   };
 
   const deleteProfile = async () => {
-    // TODO: DELETE USER - Supabase Query - Delete user from database
-    console.log("DELETING");
+    try {
+      // Function to make the post request to delete a user
+      await fetch("/api/deleteUser", {
+        method: "POST",
+        headers: new Headers({ "Content-Type": "application/json" }),
+        credentials: "same-origin",
+        body: JSON.stringify({ userData }),
+      });
+      if (error) {
+        setError(error.message);
+      }
+      // if statement
+    } catch (error) {
+      setError(error.message);
+      console.log(error);
+    } finally {
+      // Push user to signin page
+      router.push('/signin');
+    }
     onClose();
   };
 
