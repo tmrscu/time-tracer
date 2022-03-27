@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -17,7 +16,7 @@ import { supabaseClient } from "../utils/client";
 
 const Navbar = ({ profileData }) => {
   const user = supabaseClient.auth.user();
-
+  const name = `${profileData?.first_name} ${profileData?.last_name}`;
   // Supabase logout function
   const logout = () => {
     supabaseClient.auth.signOut();
@@ -51,9 +50,9 @@ const Navbar = ({ profileData }) => {
         <Menu>
           <MenuButton>
             <Avatar
-              name={`${profileData?.first_name} ${profileData?.last_name}`}
+              name={!profileData?.first_name ? "" : name}
               as={Button}
-              src="https://bit.ly/broken-link"
+              src="https://pixabay.com/vectors/blank-profile-picture-mystery-man-973460/"
             />
           </MenuButton>
           <MenuList color={"brand.text"}>
