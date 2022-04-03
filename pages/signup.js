@@ -39,8 +39,13 @@ const SignUp = () => {
     const countryQueryData = getCountries().then((results) => {
       // Add country_names to the countryOptions array
       for (let i = 0; i < results.length; i++) {
-        setCountryOptions(prevArray => [...prevArray, `${results[i].country_name}`]);
+        setCountryOptions((prevArray) => [
+          ...prevArray,
+          `${results[i].country_name}`,
+        ]);
       }
+      // Set country default value (first in list)
+      setCountry(results[0].country_name);
     });
   }, []);
 
@@ -49,13 +54,13 @@ const SignUp = () => {
     // Query Supabase for the country_name data
     // Order data alphabetically (a > z)
     let { data: countries, error } = await supabaseClient
-      .from('countries')
-      .select('country_name')
-      .order('country_name', { ascending: true });
+      .from("countries")
+      .select("country_name")
+      .order("country_name", { ascending: true });
 
     // Returns a promise
     return countries;
-  }
+  };
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -216,8 +221,12 @@ const SignUp = () => {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                 >
-                  {countryOptions.map(countries => {
-                    return <option key={countries} value={countries}>{countries}</option>;
+                  {countryOptions.map((countries) => {
+                    return (
+                      <option key={countries} value={countries}>
+                        {countries}
+                      </option>
+                    );
                   })}
                 </Select>
               </FormControl>
@@ -329,7 +338,6 @@ const SignUp = () => {
 };
 
 const Logo = () => (
-
   <svg
     width="327"
     height="69"
@@ -360,7 +368,6 @@ const Logo = () => (
       fill="#5E17EB"
     />
   </svg>
-
-)
+);
 
 export default SignUp;
