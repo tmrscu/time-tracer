@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabaseClient } from "../utils/client";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/Auth";
 import {
   Container,
   Heading,
@@ -24,11 +25,11 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
-  useFocusEffect,
+  Spinner,
 } from "@chakra-ui/react";
 
 const Profile = ({ user }) => {
-  const userData = supabaseClient.auth.user();
+  const { setUser, user: userData } = useAuth();
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,8 +37,7 @@ const Profile = ({ user }) => {
   const [industry, setIndustry] = useState("");
   const [country, setCountry] = useState("");
   const [countryOptions, setCountryOptions] = useState([]);
-  const [profileData, setProfileData] = useState({});
-
+  const [profileData, setProfileData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -63,7 +63,10 @@ const Profile = ({ user }) => {
     const countryQueryData = getCountries().then((results) => {
       // Add country_names to the countryOptions array
       for (let i = 0; i < results.length; i++) {
-        setCountryOptions(prevArray => [...prevArray, `${results[i].country_name}`]);
+        setCountryOptions((prevArray) => [
+          ...prevArray,
+          `${results[i].country_name}`,
+        ]);
       }
     });
   }, []);
@@ -83,13 +86,13 @@ const Profile = ({ user }) => {
     // Query Supabase for the country_name data
     // Order data alphabetically (a > z)
     let { data: countries, error } = await supabaseClient
-      .from('countries')
-      .select('country_name')
-      .order('country_name', { ascending: true });
+      .from("countries")
+      .select("country_name")
+      .order("country_name", { ascending: true });
 
     // Returns a promise
     return countries;
-  }
+  };
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -136,7 +139,15 @@ const Profile = ({ user }) => {
       }, 3000);
       const profileQueryData = getProfiles().then((results) => {
         setProfileData(results[0]);
+        // get the user data from supabase
       });
+      // get access_token from local storage
+      const localAuth = JSON.parse(localStorage.getItem("supabase.auth.token"));
+      const { user: userDataNew, error } =
+        await supabaseClient.auth.api.getUser(
+          localAuth.currentSession.access_token
+        );
+      setUser(userDataNew);
     }
   };
 
@@ -158,14 +169,29 @@ const Profile = ({ user }) => {
       console.log(error);
     } finally {
       // Push user to signin page
-      router.push('/signin');
+      router.push("/signin");
     }
     onClose();
   };
 
+  if (fname == "") {
+    return (
+      <Box display="flex" justifyContent="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="brand.primary"
+          size="xl"
+          mt={36}
+          border
+        />
+      </Box>
+    );
+  }
   return (
     <div>
-      <Navbar profileData={profileData} />
+      <Navbar />
       <Container centerContent maxW="container.md" p={10} mt={12}>
         <Box w="full" mb={12}>
           <Heading as="h2" size="lg" textAlign="left">
@@ -288,9 +314,15 @@ const Profile = ({ user }) => {
                   onChange={(e) => setCountry(e.target.value)}
                   mb={6}
                 >
-                  <option key={country} value={country}>{country}</option>
-                  {countryOptions.map(countries => {
-                    return <option key={countries} value={countries}>{countries}</option>;
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                  {countryOptions.map((countries, index) => {
+                    return (
+                      <option key={index} value={countries}>
+                        {countries}
+                      </option>
+                    );
                   })}
                 </Select>
               </FormControl>

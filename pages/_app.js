@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 import queryString from "query-string";
+import { AuthProvider } from "../context/Auth";
 
 import { extendTheme } from "@chakra-ui/react";
 
@@ -75,9 +76,11 @@ function MyApp({ Component, pageProps }) {
   };
 
   return (
-    <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <AuthProvider>
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </AuthProvider>
   );
 }
 

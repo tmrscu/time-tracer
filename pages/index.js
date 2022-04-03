@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
@@ -9,9 +8,6 @@ import Navbar from "../components/Navbar";
 export default function Home() {
   const router = useRouter();
   const user = supabaseClient.auth.user();
-  const [data, setData] = useState([]);
-  const [taskType, setTaskType] = useState([]);
-  const [projectTasks, setProjectTasks] = useState([]);
 
   // useEffect runs, pushes to signin page if no user
   useEffect(() => {
@@ -19,13 +15,6 @@ export default function Home() {
       router.push("/signin");
     }
   }, [user, router]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // NEEEd tyhis data
-  const fetchData = async () => {};
 
   // Returns an empty div if theres no user
   // Prevents page flash
@@ -62,6 +51,7 @@ export default function Home() {
           mb={10}
           ml={"auto"}
           mr={"auto"} 
+          alt='in progress'
         />
         <Link 
           href="https://www.flaticon.com/free-icons/work-in-progress" 
