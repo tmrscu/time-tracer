@@ -30,22 +30,24 @@ const Reset = () => {
           redirectTo: `https://timer-tracer.vercel.app/reset-password`,
         });
       if (error) {
+        setIsLoading(false);
         setIsError(error.message);
         console.log(error);
-        // setTimeout(() => {
-        //   setIsError(null);
-        //   setEmail("");
-        // }, 3000);
+        setTimeout(() => {
+          setIsError(null);
+          setEmail("");
+        }, 3000);
       } else {
         setIsLoading(false);
         setIsSuccess(true);
       }
     } catch (error) {
+      setIsLoading(false);
       setIsError(error.message);
-      //   setTimeout(() => {
-      //     setIsError(null);
-      //     setEmail("");
-      //   }, 3000);
+      setTimeout(() => {
+        setIsError(null);
+        setEmail("");
+      }, 3000);
       console.log(error);
     }
   };
@@ -80,7 +82,7 @@ const Reset = () => {
           {isError && (
             <Alert status="error" mt={6}>
               <AlertIcon />
-              There was an error processing your request
+              {isError}
             </Alert>
           )}
 
@@ -96,25 +98,27 @@ const Reset = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </FormControl>
-            <Button
-              type="submit"
-              bg="brand.primary"
-              color="white"
-              size="lg"
-              fontSize="md"
-              w="full"
-              mt={6}
-              _hover={{ bg: "purple.500" }}
-            >
-              Continue
-            </Button>
+            {!isSuccess && (
+              <Button
+                type="submit"
+                bg="brand.primary"
+                color="white"
+                size="lg"
+                fontSize="md"
+                w="full"
+                mt={6}
+                _hover={{ bg: "purple.500" }}
+              >
+                Continue
+              </Button>
+            )}
           </chakra.form>
           <Text textAlign={"center"} mt={6}>
-            Don&apos;t have an Account?
+            Don&apos;t have an account?
             <br />
             <Link href="/signup">
               <a>
-                <b>Sign up</b>
+                <b>Sign Up</b>
               </a>
             </Link>
           </Text>
