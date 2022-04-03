@@ -42,6 +42,9 @@ const SignUp = () => {
         setCountryOptions(prevArray => [...prevArray, `${results[i].country_name}`]);
       }
     });
+
+    // Set country default value (first in list)
+    setCountry(results[0].country_name);
   }, []);
 
   // Get Country data
