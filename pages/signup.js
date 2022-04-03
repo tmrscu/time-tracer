@@ -11,11 +11,12 @@ import {
   FormLabel,
   Heading,
   Input,
+  Select,
   Stack,
   Text,
   Container,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 
 const SignUp = () => {
@@ -26,10 +27,35 @@ const SignUp = () => {
   const [industry, setIndustry] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [countryOptions, setCountryOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
+
+  // On page load
+  useEffect(() => {
+    // Access the country data promise and store it locally
+    const countryQueryData = getCountries().then((results) => {
+      // Add country_names to the countryOptions array
+      for (let i = 0; i < results.length; i++) {
+        setCountryOptions(prevArray => [...prevArray, `${results[i].country_name}`]);
+      }
+    });
+  }, []);
+
+  // Get Country data
+  const getCountries = async () => {
+    // Query Supabase for the country_name data
+    // Order data alphabetically (a > z)
+    let { data: countries, error } = await supabaseClient
+      .from('countries')
+      .select('country_name')
+      .order('country_name', { ascending: true });
+
+    // Returns a promise
+    return countries;
+  }
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -184,14 +210,18 @@ const SignUp = () => {
                     *
                   </Text>
                 </FormLabel>
-                <Input
+                <Select
                   name="country"
                   type="country"
                   autoComplete="country"
                   required
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
-                />
+                >
+                  {countryOptions.map(countries => {
+                    return <option key={countries} value={countries}>{countries}</option>;
+                  })}
+                </Select>
               </FormControl>
               <FormControl id="role">
                 <FormLabel>

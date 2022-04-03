@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 import styles from "../styles/Home.module.css";
-import { Box } from "@chakra-ui/react";
+import { Box, Heading, Text, Image, Link } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 
 export default function Home() {
@@ -35,9 +35,43 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Navbar />
-      <Box color={"primary"}>HOMEPAGE</Box>
-      <Box>{JSON.stringify(data)}</Box>
-      <Box>{JSON.stringify(taskType)}</Box>
+      <Box
+        color={"black"}
+        display="flexbox"
+        height="min-content"
+        width="min-content"
+        alignItems={"center"}
+        textAlign="center"
+        px={12}
+        py={5}
+        ml={"auto"}
+        mr={"auto"}
+        mt={45}
+      >
+        <Heading 
+          as="h1" 
+          fontSize="4xl" 
+          color={"black"} 
+          whiteSpace={"nowrap"}
+          mb={5}>Homepage Currently Under Construction</Heading>
+        <Text>This page is currently being worked on by our developers. Please check back later when the work is complete.</Text>
+        <Image 
+          src="/work-in-progress.png" 
+          boxSize="200px"
+          mt={50}
+          mb={10}
+          ml={"auto"}
+          mr={"auto"} 
+        />
+        <Link 
+          href="https://www.flaticon.com/free-icons/work-in-progress" 
+          title="work in progress icons"
+          color={"brand.primary"}
+          isExternal
+        >
+          Work in progress icons created by Freepik - Flaticon
+        </Link>
+      </Box>
     </div>
   );
 }

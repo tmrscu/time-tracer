@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Button,
   Flex,
   Alert,
@@ -34,6 +35,7 @@ const Profile = ({ user }) => {
   const [role, setRole] = useState("");
   const [industry, setIndustry] = useState("");
   const [country, setCountry] = useState("");
+  const [countryOptions, setCountryOptions] = useState([]);
   const [profileData, setProfileData] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +46,7 @@ const Profile = ({ user }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // On page load
   useEffect(() => {
     // Store user profile data locally
     const profileQueryData = getProfiles().then((results) => {
@@ -54,6 +57,14 @@ const Profile = ({ user }) => {
       setRole(results[0].role);
       setIndustry(results[0].industry);
       setCountry(results[0].country);
+    });
+
+    // Access the country data promise and store it locally
+    const countryQueryData = getCountries().then((results) => {
+      // Add country_names to the countryOptions array
+      for (let i = 0; i < results.length; i++) {
+        setCountryOptions(prevArray => [...prevArray, `${results[i].country_name}`]);
+      }
     });
   }, []);
 
@@ -66,6 +77,19 @@ const Profile = ({ user }) => {
 
     return data;
   };
+
+  // Get Country data
+  const getCountries = async () => {
+    // Query Supabase for the country_name data
+    // Order data alphabetically (a > z)
+    let { data: countries, error } = await supabaseClient
+      .from('countries')
+      .select('country_name')
+      .order('country_name', { ascending: true });
+
+    // Returns a promise
+    return countries;
+  }
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -255,7 +279,7 @@ const Profile = ({ user }) => {
                     *
                   </Text>
                 </FormLabel>
-                <Input
+                <Select
                   name="country"
                   type="country"
                   autoComplete="country"
@@ -263,7 +287,12 @@ const Profile = ({ user }) => {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   mb={6}
-                />
+                >
+                  <option key={country} value={country}>{country}</option>
+                  {countryOptions.map(countries => {
+                    return <option key={countries} value={countries}>{countries}</option>;
+                  })}
+                </Select>
               </FormControl>
               <Button
                 type="submit"
