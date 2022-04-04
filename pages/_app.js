@@ -27,18 +27,18 @@ function MyApp({ Component, pageProps }) {
       (event, session) => {
         handleAuthSession(event, session);
         // If signed in - push to home page
-        console.log(router.pathname);
 
         const pathName = router.pathname;
         // get the access_token from path
-        const accessToken = queryString.parse(pathName.split("#")[1]);
+        const accessToken = queryString.parse(pathName);
+        console.log(accessToken);
 
-        if (event === "SIGNED_IN" && router.pathname === "/reset-password") {
-          // add access token as param
-          router.push(
-            `/reset-password?access_token=${accessToken.access_token}`
-          );
-        }
+        // if (event === "SIGNED_IN" && router.pathname === "/reset-password") {
+        //   // add access token as param
+        //   router.push(
+        //     `/reset-password?access_token=${accessToken.access_token}`
+        //   );
+        // }
 
         if (event === "SIGNED_IN" && router.pathname !== "/reset-password") {
           router.push("/");
