@@ -32,7 +32,6 @@ const Profile = ({ user }) => {
   const { setUser, user: userData } = useAuth();
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
-  const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [industry, setIndustry] = useState("");
   const [country, setCountry] = useState("");
@@ -53,7 +52,6 @@ const Profile = ({ user }) => {
       setProfileData(results[0]);
       setFName(results[0].first_name);
       setLName(results[0].last_name);
-      setEmail(results[0].email);
       setRole(results[0].role);
       setIndustry(results[0].industry);
       setCountry(results[0].country);
@@ -248,22 +246,6 @@ const Profile = ({ user }) => {
                   />
                 </FormControl>
               </Flex>
-              <FormControl id="email">
-                <FormLabel>
-                  Email Address{" "}
-                  <Text as="span" color="red.500">
-                    *
-                  </Text>
-                </FormLabel>
-                <Input
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormControl>
               <Flex direction={{ base: "column", md: "row" }} gap={6}>
                 <FormControl id="role">
                   <FormLabel>
