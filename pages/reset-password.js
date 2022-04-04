@@ -23,7 +23,8 @@ const ResetPassword = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const accessToken = queryString.parse(router.asPath.split("#")[1]);
+  const accessToken = queryString.parse(router.asPath);
+  console.log('reset-page', accessToken);
 
   const submitHandler = async (event) => {
     event.preventDefault();
