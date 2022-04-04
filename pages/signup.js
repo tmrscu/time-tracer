@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import {
   Alert,
   AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Box,
   Button,
   chakra,
@@ -86,7 +88,9 @@ const SignUp = () => {
         setError(error.message);
       } else {
         setIsSubmitted(true);
-        router.push("/");
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 10000);
       }
     } catch (error) {
       setError(error.message);
@@ -167,6 +171,26 @@ const SignUp = () => {
             rounded="lg"
             w={{ base: "full", md: "2xl" }}
           >
+            {isSubmitted && (
+              <Alert
+                status="success"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="150px"
+                mb={3}
+              >
+                <AlertIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  Sign Up Completed
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">
+                  Please check your email for a confirmation link to Sign In
+                </AlertDescription>
+              </Alert>
+            )}
             <Heading textAlign="center" mb={4}>
               Sign Up
             </Heading>
