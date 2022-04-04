@@ -24,9 +24,6 @@ const ResetPassword = () => {
   const [isError, setIsError] = useState(false);
 
   const accessToken = queryString.parse(router.asPath.split("#")[1]);
-  console.log(accessToken);
-  
-
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -82,7 +79,7 @@ const ResetPassword = () => {
       {isSuccess && (
         <Alert status="success" mt={6}>
           <AlertIcon />
-          Password reset Succesfull
+          Password reset Succesful
         </Alert>
       )}
       {isError && (

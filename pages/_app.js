@@ -26,12 +26,10 @@ function MyApp({ Component, pageProps }) {
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (event, session) => {
         handleAuthSession(event, session);
-        // If signed in - push to home page
 
         const pathName = router.pathname;
         // get the access_token from path
 
-        console.log('_app',pathName);
 
         const accessToken = queryString.parse(pathName.split("#")[1]);
 
@@ -57,15 +55,6 @@ function MyApp({ Component, pageProps }) {
     };
   }, [router]);
 
-  // Listen to any changes on router.pathname, user or router
-  // If user is true, push to home page
-  // useEffect(() => {
-  //   if (user) {
-  //     if (router.pathname === "/signin") {
-  //       router.push("/");
-  //     }
-  //   }
-  // }, [router.pathname, user, router]);
 
   // Function to make the post request to AUTH api to set cookie
   const handleAuthSession = async (event, session) => {
