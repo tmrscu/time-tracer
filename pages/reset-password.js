@@ -25,6 +25,7 @@ const ResetPassword = () => {
 
   const accessToken = queryString.parse(router.asPath);
   console.log('reset-page', accessToken);
+  console.log(router)
 
   const submitHandler = async (event) => {
     event.preventDefault();
