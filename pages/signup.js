@@ -24,7 +24,7 @@ import { supabaseClient } from "../utils/client";
 const SignUp = () => {
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("Australia");    // Default to Australia
   const [role, setRole] = useState("");
   const [industry, setIndustry] = useState("");
   const [email, setEmail] = useState("");
@@ -46,8 +46,6 @@ const SignUp = () => {
           `${results[i].country_name}`,
         ]);
       }
-      // Set country default value (first in list)
-      setCountry(results[0].country_name);
     });
   }, []);
 
@@ -106,7 +104,7 @@ const SignUp = () => {
   const handleReset = () => {
     setFName("");
     setLName("");
-    setCountry("");
+    setCountry("Australia");
     setRole("");
     setIndustry("");
     setEmail("");
@@ -187,7 +185,7 @@ const SignUp = () => {
                   Sign Up Completed
                 </AlertTitle>
                 <AlertDescription maxWidth="sm">
-                  Please check your email for a confirmation link to Sign In
+                  Please check your email to confirm your account creation and sign in.
                 </AlertDescription>
               </Alert>
             )}

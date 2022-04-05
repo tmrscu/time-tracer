@@ -296,9 +296,6 @@ const Profile = ({ user }) => {
                   onChange={(e) => setCountry(e.target.value)}
                   mb={6}
                 >
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
                   {countryOptions.map((countries, index) => {
                     return (
                       <option key={index} value={countries}>
@@ -364,7 +361,8 @@ function AlertDialogExample({ deleteProfile, isOpen, onOpen, onClose }) {
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure? You can&apos;t undo this action afterwards.
+              Deleting your profile will delete all client, project and task data you have created. 
+              This cannot be undone, are you sure you wish to delete your profile and user data?
             </AlertDialogBody>
 
             <AlertDialogFooter>
