@@ -132,7 +132,7 @@ const ResetPassword = () => {
         <br />
         <Link href='/signup'>
           <a>
-            <b>Sign up</b>
+            <b>Sign Up</b>
           </a>
         </Link>
       </Text>
