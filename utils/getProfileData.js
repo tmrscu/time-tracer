@@ -1,14 +1,13 @@
-import { supabaseClient } from "../utils/client";
+// Function to get User profile data
+import { supabaseClient } from '../utils/client'
 
 const getProfileData = async (user) => {
-    let { data, error } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("profile_id", user?.id);
+  let { data, error } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('profile_id', user?.id)
 
-    //
-    return data
-  };
-
+  return data
+}
 
 export default getProfileData

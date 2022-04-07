@@ -1,46 +1,50 @@
-import { supabaseClient } from "../utils/client";
-import React, { useContext, useState, useEffect } from "react";
+import { supabaseClient } from '../utils/client'
+import React, { useContext, useState, useEffect } from 'react'
 
-const AuthContext = React.createContext();
+// Create a context
+const AuthContext = React.createContext()
 
+// Create useContext hook to access the context
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
 
+// Create a provider component, which will wrap your app and make the context available
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Check active sessions and sets the user
-    const session = supabaseClient.auth.session();
+    const session = supabaseClient.auth.session()
 
-    setUser(session?.user ?? null);
-    setLoading(false);
+    // Set the user and loading status
+    setUser(session?.user ?? null)
+    setLoading(false)
 
     // Listen for changes on auth state (logged in, signed out, etc.)
     const { data: listener } = supabaseClient.auth.onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
+        setUser(session?.user ?? null)
+        setLoading(false)
         console.log(event)
       }
-    );
+    )
 
     return () => {
-      listener?.unsubscribe();
-    };
-  }, []);
+      listener?.unsubscribe()
+    }
+  }, [])
 
-  // Will be passed down to Signup, Login and Dashboard components
+  // Will pass down the user and setUser
   const value = {
     user,
-    setUser
-  };
+    setUser,
+  }
 
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
-  );
+  )
 }

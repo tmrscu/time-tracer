@@ -1,30 +1,29 @@
-import Navbar from "../components/Navbar";
-import { Box, Heading, Text, Image, Link } from "@chakra-ui/react";
+import Navbar from '../components/Navbar'
+import { Box, Heading, Text, Image, Link } from '@chakra-ui/react'
 
+// The Projects page
 const Projects = () => {
   return (
     <>
       <Navbar />
       <Box
-        color={"black"}
-        display="flexbox"
-        height="min-content"
-        width="min-content"
-        alignItems={"center"}
-        textAlign="center"
+        color={'black'}
+        display='flexbox'
+        height='min-content'
+        width='min-content'
+        alignItems={'center'}
+        textAlign='center'
         px={12}
         py={5}
-        ml={"auto"}
-        mr={"auto"}
-        mt={45}
-      >
+        ml={'auto'}
+        mr={'auto'}
+        mt={45}>
         <Heading
-          as="h1"
-          fontSize="4xl"
-          color={"black"}
-          whiteSpace={"nowrap"}
-          mb={5}
-        >
+          as='h1'
+          fontSize='4xl'
+          color={'black'}
+          whiteSpace={'nowrap'}
+          mb={5}>
           Projects Page Currently Under Construction
         </Heading>
         <Text>
@@ -32,26 +31,25 @@ const Projects = () => {
           back later when the work is complete.
         </Text>
         <Image
-          src="/work-in-progress.png"
-          boxSize="200px"
+          src='/work-in-progress.png'
+          boxSize='200px'
           mt={50}
           mb={10}
-          ml={"auto"}
-          mr={"auto"}
-          alt="in progress"
+          ml={'auto'}
+          mr={'auto'}
+          alt='in progress'
         />
         <Link
-          href="https://www.flaticon.com/free-icons/work-in-progress"
-          title="work in progress icons"
-          color={"brand.primary"}
-          isExternal
-        >
+          href='https://www.flaticon.com/free-icons/work-in-progress'
+          title='work in progress icons'
+          color={'brand.primary'}
+          isExternal>
           Work in progress icons created by Freepik - Flaticon
         </Link>
       </Box>
       ;
     </>
-  );
-};
+  )
+}
 
-export default Projects;
+export default Projects
