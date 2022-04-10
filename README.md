@@ -65,3 +65,13 @@ To start a development server.
 ```sh
 npm run dev
 ```
+
+### How this project is deployed to production
+
+<hr>
+
+This project is hosted on <a href='https://vercel.com/'>Vercel</a>. A GitHub intergration is setup so that each time code is pushed to the main branch and automatic production deploy takes place. 
+
+Vercel allows GitHub to automatically deploy your GitHub projects with Vercel, providing Preview Deployment URLs, and automatic Custom Domain updates.
+
+A guide to how this is achieved can be found <a href="https://vercel.com/docs/concepts/git#deploying-a-git-repository">here.</a>
