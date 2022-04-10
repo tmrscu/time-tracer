@@ -10,7 +10,6 @@ const Tasks = () => {
         color={'black'}
         display='flexbox'
         height='min-content'
-        width='min-content'
         alignItems={'center'}
         textAlign='center'
         px={12}
@@ -22,7 +21,6 @@ const Tasks = () => {
           as='h1'
           fontSize='4xl'
           color={'black'}
-          whiteSpace={'nowrap'}
           mb={5}>
           Tasks Page Currently Under Construction
         </Heading>

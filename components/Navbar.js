@@ -43,7 +43,7 @@ const Navbar = () => {
             </a>
           </Link>
         </Box>
-        <HStack fontWeight={'bold'} mt={2} ml={20} spacing={6}>
+        <HStack fontWeight={'bold'} mt={2} ml={20} spacing={6} display={{ base: 'none', md: 'flex'}}>
           <Link href={'/'}>
             <a>Timer</a>
           </Link>

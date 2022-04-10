@@ -10,7 +10,6 @@ const Clients = () => {
         color={'black'}
         display='flexbox'
         height='min-content'
-        width='min-content'
         alignItems={'center'}
         textAlign='center'
         px={12}
@@ -22,7 +21,6 @@ const Clients = () => {
           as='h1'
           fontSize='4xl'
           color={'black'}
-          whiteSpace={'nowrap'}
           mb={5}>
           Clients Page Currently Under Construction
         </Heading>
