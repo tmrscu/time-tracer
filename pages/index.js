@@ -30,7 +30,6 @@ export default function Home() {
         color={'black'}
         display='flexbox'
         height='min-content'
-        width='min-content'
         alignItems={'center'}
         textAlign='center'
         px={12}
@@ -42,7 +41,6 @@ export default function Home() {
           as='h1'
           fontSize='4xl'
           color={'black'}
-          whiteSpace={'nowrap'}
           mb={5}>
           Homepage Currently Under Construction
         </Heading>
