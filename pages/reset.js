@@ -30,7 +30,7 @@ const Reset = () => {
       setIsLoading(true)
       const { data, error } =
         await supabaseClient.auth.api.resetPasswordForEmail(email, {
-          //redirectTo: `https://time-tracer.vercel.app/reset-password`,
+          redirectTo: `https://time-tracer.vercel.app/reset-password`,
         })
       if (error) {
         setIsLoading(false)
@@ -43,6 +43,9 @@ const Reset = () => {
       } else {
         setIsLoading(false)
         setIsSuccess(true)
+        setTimeout(() => {
+          supabaseClient.auth.signOut();  // Sign the user out
+        }, 5000)
       }
     } catch (error) {
       setIsLoading(false)
