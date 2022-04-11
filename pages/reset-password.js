@@ -24,10 +24,11 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
+  const [accessToken, setAccessToken] = useState();
 
   // Get the access token from the query string
   useEffect(() => {
-    const accessToken = queryString.parse(router.asPath.split('#')[1])
+    setAccessToken(queryString.parse(router.asPath.split('#')[1]));
     console.log(accessToken)
   }, [])
 
