@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }) {
         }
 
         // if the event is signed_in and reset-password is NOT in the URL then redirect to the index page
-        if (event === 'SIGNED_IN' && router.pathname !== '/reset-password') {
+        if (event === 'SIGNED_IN' && !accessToken) {
           router.push('/')
         }
         // If signed out, push to sign in page
