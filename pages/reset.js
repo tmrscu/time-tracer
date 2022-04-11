@@ -46,7 +46,6 @@ const Reset = () => {
         setIsLoading(false)
         setIsSuccess(true)
         setTimeout(() => {
-          supabaseClient.auth.signOut();  // Sign the user out
           (window.close = (w => w.close() || w.close)(window.open()))();
         }, 5000)
       }
