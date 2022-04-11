@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import queryString from 'query-string'
@@ -24,11 +24,12 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
-  const [accessToken, setAccessToken] = useState('');
 
   // Get the access token from the query string
-  setAccessToken(queryString.parse(router.asPath.split('#')[1]));
-  console.log(accessToken)
+  useEffect(() => {
+    const accessToken = queryString.parse(router.asPath.split('#')[1])
+    console.log(accessToken)
+  }, [])
 
   // Function to handle the reset password request
   const submitHandler = async (event) => {
