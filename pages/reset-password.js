@@ -27,6 +27,7 @@ const ResetPassword = () => {
 
   // Get the access token from the query string
   const accessToken = queryString.parse(router.asPath.split('#')[1])
+  console.log(accessToken)
 
   // Function to handle the reset password request
   const submitHandler = async (event) => {
