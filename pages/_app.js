@@ -39,9 +39,10 @@ function MyApp({ Component, pageProps }) {
         // whilst also setting the access_token in the query string
         if (event === 'SIGNED_IN' && router.pathname === '/reset-password') {
           // add access token as param
-          router.push(
-            `/reset-password?access_token=${accessToken.access_token}`
-          )
+          // router.push(
+          //   `/reset-password?access_token=${accessToken.access_token}`
+          // )
+          return
         }
 
         // if the event is signed_in and reset-password is NOT in the URL then redirect to the index page
