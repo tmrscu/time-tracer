@@ -20,6 +20,7 @@ import { supabaseClient } from '../utils/client'
 // The signin page
 const SignIn = () => {
   // Setting state variables
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -42,6 +43,8 @@ const SignIn = () => {
           setEmail('')
           setPassword('')
         }, 3000)
+      } else {
+        router.push('/');   // Push the user to index/home
       }
     } catch (error) {
       setError(error.message)
