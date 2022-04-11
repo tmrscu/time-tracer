@@ -92,7 +92,7 @@ const Reset = () => {
 
           <chakra.form onSubmit={submitHandler} w='full' mt={6}>
             <FormControl id='email'>
-              <FormLabel>Email address</FormLabel>
+              <FormLabel>Email Address</FormLabel>
               <Input
                 name='email'
                 type='email'
