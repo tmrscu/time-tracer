@@ -32,7 +32,8 @@ function MyApp({ Component, pageProps }) {
         // get the access_token from query string
         // const accessToken = queryString.parse(pathName.split('#')[1])
         // Get the access token from the query string
-        const accessToken = queryString.parse(router.asPath.split('#')[1])
+        const accessToken = {}
+        accessToken = queryString.parse(router.asPath.split('#')[1])
         console.log(accessToken)
 
         // if the event is signed_in and reset-password is in the URL then redirect to the reset-password page
@@ -45,9 +46,10 @@ function MyApp({ Component, pageProps }) {
         }
 
         // if the event is signed_in and reset-password is NOT in the URL then redirect to the index page
-        if (event === 'SIGNED_IN' && !accessToken) {
+        if (event === 'SIGNED_IN' && accessToken == {}) {
           router.push('/')
         }
+        
         // If signed out, push to sign in page
         if (event === 'SIGNED_OUT') {
           router.push('/signin')
