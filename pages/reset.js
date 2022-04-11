@@ -47,7 +47,7 @@ const Reset = () => {
         setIsSuccess(true)
         setTimeout(() => {
           supabaseClient.auth.signOut();  // Sign the user out
-          router.push('/signin');
+          router.push('/reset-password');
         }, 5000)
       }
     } catch (error) {
