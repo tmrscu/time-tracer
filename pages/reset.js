@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import {
   Container,
@@ -18,6 +19,7 @@ import { supabaseClient } from '../utils/client'
 // The Reset page
 const Reset = () => {
   // Setting state variables
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
