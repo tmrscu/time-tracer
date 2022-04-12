@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { supabaseClient } from '../utils/client'
 import styles from '../styles/Home.module.css'
 import { Box, Heading, Text, Image, Link } from '@chakra-ui/react'
-import Navbar from '../components/Navbar'
+import Header from '../components/Header'
 
 export default function Home() {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function Home() {
   // The index page
   return (
     <div className={styles.container}>
-      <Navbar />
+      <Header />
       <Box
         color={'black'}
         display='flexbox'

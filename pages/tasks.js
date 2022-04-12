@@ -1,11 +1,11 @@
-import Navbar from '../components/Navbar'
 import { Box, Heading, Text, Image, Link } from '@chakra-ui/react'
+import Header from '../components/Header'
 
 // The tasks page
 const Tasks = () => {
   return (
     <>
-      <Navbar />
+      <Header />
       <Box
         color={'black'}
         display='flexbox'

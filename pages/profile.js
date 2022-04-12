@@ -27,6 +27,7 @@ import {
   useDisclosure,
   Spinner,
 } from '@chakra-ui/react'
+import Header from '../components/Header'
 
 // The Profile Page
 const Profile = ({ user }) => {
@@ -197,7 +198,7 @@ const Profile = ({ user }) => {
   // The profile page
   return (
     <div>
-      <Navbar />
+      <Header />
       <Container centerContent maxW='container.md' p={10} mt={12}>
         <Box w='full' mb={12}>
           <Heading as='h2' size='lg' textAlign='left'>
