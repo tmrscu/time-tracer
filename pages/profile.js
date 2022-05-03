@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabaseClient } from '../utils/client'
-import Navbar from '../components/Navbar'
 import { useAuth } from '../context/Auth'
 import {
   Container,

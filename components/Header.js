@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   Box,
   Stack,
-  Heading,
+  Collapse,
   Flex,
   Text,
   Button,
@@ -17,6 +17,8 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { supabaseClient } from "../utils/client";
 import { useAuth } from "../context/Auth";
+import NavMenu from "./NavMenu";
+import MobileNavMenu from "./MobileNavMenu";
 
 const Header = (props) => {
   // Handle state and function to toggle mobile menu
@@ -44,7 +46,7 @@ const Header = (props) => {
       color="white"
       {...props}
     >
-      <Flex align="center" mr={5}>
+      <Flex align="center" maxW={48} mr={5} ml={{base: '-30px', md: '0px'}}>
         <Link href={"/"}>
           <a>
             <Logo />
@@ -52,61 +54,23 @@ const Header = (props) => {
         </Link>
       </Flex>
 
-      <Box  cursor={'pointer'} display={{ base: "block", md: "none" }} onClick={handleToggle}>
+      <Box
+        cursor={"pointer"}
+        position="absolute"
+        top={9}
+        right={6}
+        display={{ base: "block", md: "none" }}
+        onClick={handleToggle}
+      >
         <HamburgerIcon boxSize={6} />
       </Box>
-
-      <Stack
-        direction={{ base: "column", md: "row" }}
-        display={{ base: isOpen ? "block" : "none", md: "flex" }}
-        width={{ base: "full", md: "auto" }}
-        alignItems="center"
-        flexGrow={1}
-        mt={{ base: 4, md: 0 }}
-        fontWeight={"bold"}
-        ml={{md: 20}}
-      >
-        <Text my={2} fontSize="sm" fontWeight="400" color={"white"} display={{md: 'none'}}>
-          Logged in as:{" "}
-          <Text
-            as="span"
-            color={"white"}
-          >{`${user?.user_metadata?.first_name} ${user?.user_metadata?.last_name}`}</Text>
-        </Text>
-        <Text>
-          <Link href={"/"}>
-            <a>Timer</a>
-          </Link>
-        </Text>
-        <Text>
-          <Link href={"/clients"}>
-            <a>Clients</a>
-          </Link>
-        </Text>
-        <Text>
-          <Link href={"/projects"}>
-            <a>Projects</a>
-          </Link>
-        </Text>
-        <Text>
-          <Link href={"/tasks"}>
-            <a>Tasks</a>
-          </Link>
-        </Text>
-        <Box display={{ md: "none" }}>
-          <Divider></Divider>
-
-          <Text my={2} display={"inline-block"} onClick={logout} cursor='pointer'>
-            Logout
-          </Text>
-          <Text>
-            <Link href={"/profile"}>
-              <a>Profile Settings</a>
-            </Link>
-          </Text>
-        </Box>
-      </Stack>
-
+      <MobileNavMenu
+        isOpen={isOpen}
+        onClose={onClose}
+        user={user}
+        logout={logout}
+      />
+      <NavMenu />
       <Box
         display={{ base: isOpen ? "block" : "none", md: "block" }}
         mt={{ base: 4, md: 0 }}
@@ -149,7 +113,7 @@ const Header = (props) => {
 // Logo for the navbar
 const Logo = () => (
   <svg
-    width="216"
+    width="100%"
     height="46"
     viewBox="0 0 216 46"
     fill="none"
