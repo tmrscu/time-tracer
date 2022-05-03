@@ -15,6 +15,17 @@ const theme = extendTheme({
       text: '#1D1D1D',
     },
   },
+  components: {
+    Switch: {
+      baseStyle: {
+        track: {
+          _focus: {
+            boxShadow: 'none'
+          }
+        }
+      }
+    }
+  }
 })
 
 function MyApp({ Component, pageProps }) {
