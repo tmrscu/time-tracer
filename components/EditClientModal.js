@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -15,7 +16,29 @@ import {
   Switch,
 } from "@chakra-ui/react";
 
-const UpdateClientModal = ({ isOpen, onClose, updateClient}) => {
+const UpdateClientModal = ({ isOpen, onClose, updateClient, editClientData}) => {
+  const [companyNameInput, setCompanyNameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [firstNameInput, setFirstNameInput] = useState('');
+  const [lastNameInput, setLastNameInput] = useState('');
+  const [contactNumberInput, setContactNumberInput] = useState('');
+  const [statusInput, setStatusInput] = useState('');
+  
+
+  const onChangeSwitch = () => {
+
+  }
+  // On page load
+  useEffect(() => {
+    // Store user profile data locally
+      setCompanyNameInput(editClientData.company)
+      setEmailInput(editClientData.email)
+      setFirstNameInput(editClientData.first_name)
+      setLastNameInput(editClientData.last_name)
+      setContactNumberInput(editClientData.contact_number)
+      setStatusInput(editClientData.status)
+    }, [editClientData]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -25,40 +48,34 @@ const UpdateClientModal = ({ isOpen, onClose, updateClient}) => {
         <ModalBody pb={6}>
           <FormControl>
             <FormLabel>Company Name</FormLabel>
-            <Input />
+            <Input value={companyNameInput} onChange={(e) => setCompanyNameInput(e.value)}/>
+          </FormControl>
+
+          <FormControl mt={4}>
+            <FormLabel>Email</FormLabel>
+            <Input value={emailInput} onChange={(e) => setEmailInput(e.value)}/>
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>First Name</FormLabel>
-            <Input />
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Email Address</FormLabel>
-            <Input />
+            <Input value={firstNameInput} onChange={(e) => setFirstNameInput(e.value)}/>
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Last Name</FormLabel>
-            <Input />
+            <Input value={lastNameInput} onChange={(e) => setLastNameInput(e.value)}/>
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Contact Number</FormLabel>
-            <Input />
+            <Input value={contactNumberInput} onChange={(e) => setContactNumberInput(e.value)}/>
           </FormControl>
-
-          {/* <Stack spacing={5} mt={5} direction="row">
-            <Checkbox defaultChecked>
-            Client Active
-            </Checkbox>
-          </Stack> */}
 
           <FormControl display="flex" alignItems="center" mt={5}>
             <FormLabel htmlFor="email-alerts" mb="0">
               Client Active
             </FormLabel>
-            <Switch id="email-alerts" />
+            <Switch isChecked={statusInput} onChange={() => setStatusInput(setStatusInput => !setStatusInput)} />
           </FormControl>
         </ModalBody>
 
