@@ -139,6 +139,7 @@ const Clients = () => {
       <EditClientModal
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
+        user={user}
         setClients={setClients}
         getClientData={getClientData}
         editClientData={editClientData}

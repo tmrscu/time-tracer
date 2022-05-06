@@ -12,14 +12,16 @@ import {
   Input,
   ModalFooter,
   Button,
-  Checkbox,
-  Stack,
   Switch,
+  Alert,
+  AlertIcon,
+  Text,
 } from "@chakra-ui/react";
 
 const UpdateClientModal = ({
   isOpen,
   onClose,
+  user,
   setClients,
   getClientData,
   editClientData,
@@ -33,7 +35,6 @@ const UpdateClientModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
 
   // On page load
   useEffect(() => {
@@ -46,12 +47,36 @@ const UpdateClientModal = ({
     setStatusInput(editClientData.status);
   }, [editClientData]);
 
+  const isUnique = async (company) => {
+    const { data, error } = await supabaseClient
+      .from("clients")
+      .select("company")
+      .ilike("company", company)
+      .not("client_id", "eq", editClientData.client_id)
+      .eq("profile_id", user.id);
+
+    return data;
+  };
+
   // Submit the form data
   const submitHandler = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
     try {
+      let canCreate = [];
+      // Get all records with matching company names
+      await isUnique(companyNameInput).then((results) => {
+        canCreate = results;
+      });
+      // Error if company name record already exists
+      if (canCreate.length != 0) {
+        setError("Company Name must be a unique value.");
+        setTimeout(() => {
+          setError(null);
+        }, 3000);
+        return;
+      }
       // Update data in Supabase
       const { data, error } = await supabaseClient
         .from("clients")
@@ -85,10 +110,6 @@ const UpdateClientModal = ({
       }, 3000);
     } finally {
       setIsLoading(false);
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
     }
   };
 
@@ -99,6 +120,12 @@ const UpdateClientModal = ({
         <ModalHeader>Update Client</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
+          {error && (
+            <Alert status="error" mb="6">
+              <AlertIcon />
+              <Text textAlign="center">{error}</Text>
+            </Alert>
+          )}
           <FormControl>
             <FormLabel>Company Name</FormLabel>
             <Input
