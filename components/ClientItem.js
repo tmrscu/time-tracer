@@ -13,6 +13,7 @@ const ClientItem = ({
   onUpdateOpen,
   onDeleteOpen,
   setEditClientData,
+  setDeleteClientId
 }) => {
   const handleEdit = () => {
     setEditClientData({
@@ -26,6 +27,11 @@ const ClientItem = ({
     });
     onUpdateOpen();
   };
+
+  const handleDelete = () => {
+    setDeleteClientId(client_id);
+    onDeleteOpen();
+  }
 
   return (
     <Tr fontSize="sm">
@@ -43,7 +49,7 @@ const ClientItem = ({
       <Td>{contact_number}</Td>
       <Td w={2}>{status ? "Active" : "Inactive"} </Td>
       <Td
-        onClick={onDeleteOpen}
+        onClick={handleDelete}
         cursor={"pointer"}
         textAlign={"center"}
         _hover={{ color: "red.500" }}
