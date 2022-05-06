@@ -12,12 +12,19 @@ import {
   Input,
   ModalFooter,
   Button,
-  Checkbox,
-  Stack,
   Switch,
+  Alert,
+  AlertIcon,
+  Text,
 } from "@chakra-ui/react";
 
-const NewClientModal = ({ isOpen, onClose, user, setClients, getClientData}) => {
+const NewClientModal = ({
+  isOpen,
+  onClose,
+  user,
+  setClients,
+  getClientData,
+}) => {
   const [companyNameInput, setCompanyNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [firstNameInput, setFirstNameInput] = useState("");
@@ -27,44 +34,46 @@ const NewClientModal = ({ isOpen, onClose, user, setClients, getClientData}) => 
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
 
   const isUnique = async (company) => {
     const { data, error } = await supabaseClient
-        .from("clients")
-        .select("company")
-        .ilike('company', company)
-        .eq("profile_id", user.id);
+      .from("clients")
+      .select("company")
+      .ilike("company", company)
+      .eq("profile_id", user.id);
 
     return data;
-  }
+  };
 
   // Submit the form data
   const submitHandler = async (event) => {
     setIsLoading(true);
     setError(null);
     try {
-      if (isUnique(companyNameInput).length != 0) {
-        // FIX THIS
-        setError(error.message);
+      let canCreate = [];
+      // Get all records with matching company names
+      await isUnique(companyNameInput).then((results) => {
+        canCreate = results;
+      });
+      // Error if company name record already exists
+      if (canCreate.length != 0) {
+        setError("Company Name must be a unique value.");
         setTimeout(() => {
           setError(null);
           // RESET FORM DATA?
         }, 3000);
-        return
+        return;
       }
-      // Update data in Supabase
-      const { data, error } = await supabaseClient
-        .from("clients")
-        .insert({
-          company: companyNameInput,
-          email: emailInput,
-          first_name: firstNameInput,
-          last_name: lastNameInput,
-          contact_number: contactNumberInput,
-          status: statusInput,
-          profile_id: user.id
-        })
+      // Insert data into Supabase
+      const { data, error } = await supabaseClient.from("clients").insert({
+        company: companyNameInput,
+        email: emailInput,
+        first_name: firstNameInput,
+        last_name: lastNameInput,
+        contact_number: contactNumberInput,
+        status: statusInput,
+        profile_id: user.id,
+      });
       if (error) {
         setError(error.message);
         setTimeout(() => {
@@ -73,15 +82,15 @@ const NewClientModal = ({ isOpen, onClose, user, setClients, getClientData}) => 
         }, 3000);
       } else {
         getClientData().then((results) => {
-          setClients(results);  // Refresh client data
+          setClients(results); // Refresh client data
           setCompanyNameInput("");
           setEmailInput("");
           setFirstNameInput("");
           setLastNameInput("");
           setContactNumberInput("");
           setStatusInput(true);
-          onClose();  // Closes Modal
-        })
+          onClose(); // Closes Modal
+        });
       }
       // if statement
     } catch (error) {
@@ -92,13 +101,9 @@ const NewClientModal = ({ isOpen, onClose, user, setClients, getClientData}) => 
       }, 3000);
     } finally {
       setIsLoading(false);
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
     }
   };
-  
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -106,6 +111,12 @@ const NewClientModal = ({ isOpen, onClose, user, setClients, getClientData}) => 
         <ModalHeader>Add New Client</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
+          {error && (
+            <Alert status="error" mb="6">
+              <AlertIcon />
+              <Text textAlign="center">{error}</Text>
+            </Alert>
+          )}
           <FormControl>
             <FormLabel>Company Name</FormLabel>
             <Input
