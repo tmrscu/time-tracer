@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabaseClient } from "../utils/client";
+import { useAuth } from "../context/Auth";
 import {
   Box,
   Heading,
@@ -12,7 +13,7 @@ import {
   Tbody,
   Tr,
   Th,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import { AddIcon } from "@chakra-ui/icons";
@@ -21,11 +22,12 @@ import ClientItem from "../components/ClientItem";
 import EditClientModal from "../components/EditClientModal";
 import DeleteDialog from "../components/DeleteDialog";
 
-
 // The Client Page
 const Clients = () => {
+  const { user } = useAuth();
   const [clients, setClients] = useState([]);
   const [editClientData, setEditClientData] = useState({});
+  const [deleteClientId, setDeleteClientId] = useState();
 
   const getClientData = async () => {
     let { data: clients, error } = await supabaseClient
@@ -58,29 +60,23 @@ const Clients = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
 
-  const addClient = () => {
-    // Add Client here into supabase
+  const deleteClient = async () => {
+    const id = deleteClientId;
+    const { data, error } = await supabaseClient
+      .from("clients")
+      .delete()
+      .eq("client_id", id);
 
-    // Get request and setState of new list of clients
+    if (!error) {
+      // Refresh the task types
+      getClientData().then((tasks) => {
+        setClients(tasks);
+      });
+    }
+    setDeleteClientId(null);
 
-    // Close the add new client modal
-    onNewClose();
-  };
-
-  const deleteClient = (id) => {
-    // Delete Client here
-    alert("Woah! Lets delete a client!");
-    // Get request and setState of new list of clients
     // Close the Delete Dialog
     onDeleteClose();
-  };
-
-  const updateClient = (id) => {
-    // Update Client here
-    // Get request and setState of new list of clients
-    // Close the Edit Dialog
-    alert("Woah! lets update our client");
-    onUpdateClose();
   };
 
   return (
@@ -89,7 +85,7 @@ const Clients = () => {
       <Header />
       <Container maxW="6xl" pt={5}>
         <Flex justify={"space-between"}>
-          <Heading as="h2" size="lg" fontWeight={400}>
+          <Heading as="h2" size="lg" fontWeight={700}>
             Clients
           </Heading>
           <Button
@@ -101,7 +97,7 @@ const Clients = () => {
             New
           </Button>
         </Flex>
-        {clients.length > 1 && (
+        {clients.length > 0 && (
           <TableContainer mt={12} bg="white" borderRadius={5} shadow="lg">
             <Table variant="simple">
               <Thead bg="brand.primary">
@@ -124,6 +120,7 @@ const Clients = () => {
                     onUpdateOpen={onUpdateOpen}
                     onDeleteOpen={onDeleteOpen}
                     setEditClientData={setEditClientData}
+                    setDeleteClientId={setDeleteClientId}
                   />
                 ))}
               </Tbody>
@@ -135,19 +132,23 @@ const Clients = () => {
       <NewClientModal
         isOpen={isNewOpen}
         onClose={onNewClose}
-        addClient={addClient}
+        user={user}
+        setClients={setClients}
+        getClientData={getClientData}
       />
       <EditClientModal
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
-        updateClient={updateClient}
+        setClients={setClients}
+        getClientData={getClientData}
         editClientData={editClientData}
       />
       <DeleteDialog
         isOpen={isDeleteOpen}
         onClose={onDeleteClose}
         title={"Delete Client"}
-        deleteClient={deleteClient}
+        type={"Client"}
+        deleteFunction={deleteClient}
       />
     </Box>
   );
