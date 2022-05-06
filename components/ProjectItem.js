@@ -1,34 +1,31 @@
 import { Td, Tr } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
-const ClientItem = ({
-  client_id,
-  company,
-  email,
-  first_name,
-  last_name,
-  contact_number,
+const ProjectItem = ({
+  project_id,
+  project_name,
+  hourly_rate,
   status,
+  client_id,
+  clients,
   onUpdateOpen,
   onDeleteOpen,
-  setEditClientData,
-  setDeleteClientId,
+  setEditProjectData,
+  setDeleteProjectId,
 }) => {
   const handleEdit = () => {
-    setEditClientData({
-      client_id,
-      company,
-      email,
-      first_name,
-      last_name,
-      contact_number,
+    setEditProjectData({
+      project_id,
+      project_name,
+      hourly_rate,
       status,
+      client_id,
     });
     onUpdateOpen();
   };
 
   const handleDelete = () => {
-    setDeleteClientId(client_id);
+    setDeleteProjectId(project_id);
     onDeleteOpen();
   };
 
@@ -41,11 +38,9 @@ const ClientItem = ({
       >
         <EditIcon />
       </Td>
-      <Td>{company}</Td>
-      <Td>{email}</Td>
-      <Td>{first_name}</Td>
-      <Td>{last_name}</Td>
-      <Td>{contact_number}</Td>
+      <Td>{project_name}</Td>
+      <Td>{hourly_rate}</Td>
+      <Td>{clients.first_name} {clients.last_name} / {clients.company}</Td>
       <Td w={2}>{status ? "Active" : "Inactive"} </Td>
       <Td
         onClick={handleDelete}
@@ -59,4 +54,4 @@ const ClientItem = ({
   );
 };
 
-export default ClientItem;
+export default ProjectItem;
