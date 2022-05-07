@@ -13,6 +13,7 @@ import {
   MenuList,
   Avatar,
   Divider,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { supabaseClient } from "../utils/client";
@@ -28,6 +29,9 @@ const Header = (props) => {
   // Get the user context and set the name variable
   const { user } = useAuth();
   const name = `${user?.user_metadata?.first_name} ${user?.user_metadata?.last_name}`;
+
+  // Check if size of the screen is desktop size
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
   // Supabase logout function
   const logout = () => {
@@ -46,7 +50,7 @@ const Header = (props) => {
       color="white"
       {...props}
     >
-      <Flex align="center" maxW={48} mr={5} ml={{base: '-30px', md: '0px'}}>
+      <Flex align="center" maxW={48} mr={5} ml={{ base: "-30px", md: "0px" }}>
         <Link href={"/"}>
           <a>
             <Logo />
@@ -64,12 +68,15 @@ const Header = (props) => {
       >
         <HamburgerIcon boxSize={6} />
       </Box>
-      <MobileNavMenu
-        isOpen={isOpen}
-        onClose={onClose}
-        user={user}
-        logout={logout}
-      />
+      {!isDesktop && (
+        <MobileNavMenu
+          isOpen={isOpen}
+          onClose={onClose}
+          user={user}
+          logout={logout}
+        />
+      )}
+
       <NavMenu />
       <Box
         display={{ base: isOpen ? "block" : "none", md: "block" }}

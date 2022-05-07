@@ -18,7 +18,7 @@ const MobileNavMenu = ({ isOpen, user, logout }) => {
       <Stack
         direction={{ base: "column", md: "row" }}
         width={{ base: "100%", md: "200px" }}
-        display={{ base: "block", md: "flex" }}
+        display={{ base: "block", md: "none" }}
         alignItems="flex-start"
         flexGrow={1}
         mt={{ base: 4, md: 0 }}
