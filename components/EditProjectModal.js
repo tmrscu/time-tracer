@@ -7,6 +7,7 @@ import {
   ModalCloseButton,
   ModalHeader,
   ModalBody,
+  chakra,
   FormControl,
   FormLabel,
   Input,
@@ -110,71 +111,76 @@ const UpdateProjectModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Update Project</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          {error && (
-            <Alert status="error" mb="6">
-              <AlertIcon />
-              <Text textAlign="center">{error}</Text>
-            </Alert>
-          )}
-          <FormControl>
-            <FormLabel>Project Name</FormLabel>
-            <Input
-              value={projectNameInput}
-              onChange={(e) => setProjectNameInput(e.target.value)}
-            />
-          </FormControl>
+        <chakra.form onSubmit={(e) => submitHandler(e)}>
+          <ModalHeader>Update Project</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            {error && (
+              <Alert status="error" mb="6">
+                <AlertIcon />
+                <Text textAlign="center">{error}</Text>
+              </Alert>
+            )}
+            <FormControl>
+              <FormLabel>Project Name</FormLabel>
+              <Input
+                required
+                value={projectNameInput}
+                onChange={(e) => setProjectNameInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Hourly Rate</FormLabel>
-            <Input
-              value={hourlyRateInput}
-              onChange={(e) => setHourlyRateInput(e.target.value)}
-            />
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Hourly Rate</FormLabel>
+              <Input
+                required
+                value={hourlyRateInput}
+                onChange={(e) => setHourlyRateInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Client / Company</FormLabel>
-            <Select
-              name="client"
-              type="client"
-              autoComplete="client"
-              required
-              value={clientIdInput}
-              onChange={(e) => setClientIdInput(e.target.value)}
-              mb={6}
-            >
-              {clientData.map((clients, index) => {
-                return (
-                  <option key={index} value={clients.client_id}>
-                    {clients.first_name} {clients.last_name} / {clients.company}
-                  </option>
-                );
-              })}
-            </Select>
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Client / Company</FormLabel>
+              <Select
+                name="client"
+                type="client"
+                autoComplete="client"
+                required
+                value={clientIdInput}
+                onChange={(e) => setClientIdInput(e.target.value)}
+                mb={6}
+              >
+                {clientData.map((clients, index) => {
+                  return (
+                    <option key={index} value={clients.client_id}>
+                      {clients.first_name} {clients.last_name} /{" "}
+                      {clients.company}
+                    </option>
+                  );
+                })}
+              </Select>
+            </FormControl>
 
-          <FormControl display="flex" alignItems="center" mt={5}>
-            <FormLabel htmlFor="email-alerts" mb="0">
-              Project Active
-            </FormLabel>
-            <Switch
-              isChecked={statusInput}
-              onChange={() =>
-                setStatusInput((setStatusInput) => !setStatusInput)
-              }
-            />
-          </FormControl>
-        </ModalBody>
+            <FormControl display="flex" alignItems="center" mt={5}>
+              <FormLabel htmlFor="email-alerts" mb="0">
+                Project Active
+              </FormLabel>
+              <Switch
+                isChecked={statusInput}
+                onChange={() =>
+                  setStatusInput((setStatusInput) => !setStatusInput)
+                }
+              />
+            </FormControl>
+          </ModalBody>
 
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={(e) => submitHandler(e)}>
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </ModalFooter>
+          <ModalFooter>
+            <Button type="submit" colorScheme="blue" mr={3}>
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </chakra.form>
       </ModalContent>
     </Modal>
   );
