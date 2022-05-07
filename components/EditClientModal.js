@@ -7,6 +7,7 @@ import {
   ModalCloseButton,
   ModalHeader,
   ModalBody,
+  chakra,
   FormControl,
   FormLabel,
   Input,
@@ -47,6 +48,7 @@ const UpdateClientModal = ({
     setStatusInput(editClientData.status);
   }, [editClientData]);
 
+  // Return and records with the same value for company name
   const isUnique = async (company) => {
     const { data, error } = await supabaseClient
       .from("clients")
@@ -58,14 +60,31 @@ const UpdateClientModal = ({
     return data;
   };
 
+  // Check email and contact number inputs (one must be given)
+  const inputVerification = () => {
+    if (emailInput == "" && contactNumberInput == "") {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   // Submit the form data
   const submitHandler = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
     try {
-      let canCreate = [];
+      // Verify email/contactNumber inputs (one must be given)
+      if (inputVerification() == false) {
+        setError("Please enter a value for email or contact number.");
+        setTimeout(() => {
+          setError(null);
+        }, 3000);
+        return;
+      }
       // Get all records with matching company names
+      let canCreate = [];
       await isUnique(companyNameInput).then((results) => {
         canCreate = results;
       });
@@ -117,74 +136,79 @@ const UpdateClientModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Update Client</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          {error && (
-            <Alert status="error" mb="6">
-              <AlertIcon />
-              <Text textAlign="center">{error}</Text>
-            </Alert>
-          )}
-          <FormControl>
-            <FormLabel>Company Name</FormLabel>
-            <Input
-              value={companyNameInput}
-              onChange={(e) => setCompanyNameInput(e.target.value)}
-            />
-          </FormControl>
+        <chakra.form onSubmit={(e) => submitHandler(e)}>
+          <ModalHeader>Update Client</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            {error && (
+              <Alert status="error" mb="6">
+                <AlertIcon />
+                <Text textAlign="center">{error}</Text>
+              </Alert>
+            )}
+            <FormControl>
+              <FormLabel>Company Name</FormLabel>
+              <Input
+                required
+                value={companyNameInput}
+                onChange={(e) => setCompanyNameInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-            />
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>First Name</FormLabel>
-            <Input
-              value={firstNameInput}
-              onChange={(e) => setFirstNameInput(e.target.value)}
-            />
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>First Name</FormLabel>
+              <Input
+                required
+                value={firstNameInput}
+                onChange={(e) => setFirstNameInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Last Name</FormLabel>
-            <Input
-              value={lastNameInput}
-              onChange={(e) => setLastNameInput(e.target.value)}
-            />
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                required
+                value={lastNameInput}
+                onChange={(e) => setLastNameInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Contact Number</FormLabel>
-            <Input
-              value={contactNumberInput}
-              onChange={(e) => setContactNumberInput(e.target.value)}
-            />
-          </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Contact Number</FormLabel>
+              <Input
+                value={contactNumberInput}
+                onChange={(e) => setContactNumberInput(e.target.value)}
+              />
+            </FormControl>
 
-          <FormControl display="flex" alignItems="center" mt={5}>
-            <FormLabel htmlFor="email-alerts" mb="0">
-              Client Active
-            </FormLabel>
-            <Switch
-              isChecked={statusInput}
-              onChange={() =>
-                setStatusInput((setStatusInput) => !setStatusInput)
-              }
-            />
-          </FormControl>
-        </ModalBody>
+            <FormControl display="flex" alignItems="center" mt={5}>
+              <FormLabel htmlFor="email-alerts" mb="0">
+                Client Active
+              </FormLabel>
+              <Switch
+                isChecked={statusInput}
+                onChange={() =>
+                  setStatusInput((setStatusInput) => !setStatusInput)
+                }
+              />
+            </FormControl>
+          </ModalBody>
 
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={(e) => submitHandler(e)}>
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </ModalFooter>
+          <ModalFooter>
+            <Button type="submit" colorScheme="blue" mr={3}>
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </chakra.form>
       </ModalContent>
     </Modal>
   );
