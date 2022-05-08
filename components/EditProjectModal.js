@@ -11,6 +11,11 @@ import {
   FormControl,
   FormLabel,
   Input,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   ModalFooter,
   Button,
   Switch,
@@ -24,6 +29,9 @@ const UpdateProjectModal = ({
   isOpen,
   onClose,
   setProjects,
+  setFilteredList,
+  filterByClient,
+  filterValue,
   getProjectData,
   editProjectData,
   clientData,
@@ -93,6 +101,7 @@ const UpdateProjectModal = ({
       } else {
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
+          setFilteredList(filterByClient(results, filterValue)); // Refresh filter list
           onClose(); // Closes Modal
         });
       }
@@ -132,15 +141,23 @@ const UpdateProjectModal = ({
 
             <FormControl mt={4}>
               <FormLabel>Hourly Rate</FormLabel>
-              <Input
+              <NumberInput
                 required
+                onChange={(valueString) => setHourlyRateInput(valueString)}
                 value={hourlyRateInput}
-                onChange={(e) => setHourlyRateInput(e.target.value)}
-              />
+                step={0.01}
+                min={0}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Client / Company</FormLabel>
+              <FormLabel>Company / Client</FormLabel>
               <Select
                 name="client"
                 type="client"
@@ -153,8 +170,8 @@ const UpdateProjectModal = ({
                 {clientData.map((clients, index) => {
                   return (
                     <option key={index} value={clients.client_id}>
-                      {clients.first_name} {clients.last_name} /{" "}
-                      {clients.company}
+                      {clients.company} / {clients.first_name}{" "}
+                      {clients.last_name}
                     </option>
                   );
                 })}

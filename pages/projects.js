@@ -6,6 +6,8 @@ import {
   Container,
   Flex,
   Button,
+  FormLabel,
+  Select,
   TableContainer,
   Table,
   Thead,
@@ -27,6 +29,8 @@ const Projects = () => {
   const [editProjectData, setEditProjectData] = useState({});
   const [deleteProjectId, setDeleteProjectId] = useState();
   const [clientData, setClientData] = useState([{}]);
+  const [filterValue, setFilterValue] = useState("");
+  const [filteredList, setFilteredList] = useState([]);
 
   const getProjectData = async () => {
     let { data: projects, error } = await supabaseClient
@@ -45,12 +49,26 @@ const Projects = () => {
   useEffect(() => {
     getProjectData().then((results) => {
       setProjects(results);
+      setFilteredList(filterByClient(results, ""));
     });
 
     getClientData().then((results) => {
       setClientData(results);
     });
   }, []);
+
+  const filterByClient = (filteredData, filterCheck) => {
+    // Avoid filter for empty string
+    if (!filterCheck) {
+      return filteredData;
+    }
+
+    const filteredClients = filteredData.filter(
+      (project) => project.client_id == filterCheck
+    );
+
+    return filteredClients;
+  };
 
   const {
     isOpen: isNewOpen,
@@ -81,6 +99,7 @@ const Projects = () => {
       // Refresh the project data
       getProjectData().then((results) => {
         setProjects(results);
+        setFilteredList(results);
       });
     }
     setDeleteProjectId(null);
@@ -107,7 +126,31 @@ const Projects = () => {
             New
           </Button>
         </Flex>
-        {projects.length > 0 && (
+        <FormLabel mt={6}>Select a Company / Client to filter by:</FormLabel>
+        <Select
+          name="client"
+          type="client"
+          autoComplete="client"
+          required
+          value={filterValue}
+          onChange={(e) => {
+            setFilterValue(e.target.value);
+            setFilteredList(filterByClient(projects, e.target.value));
+          }}
+          mb={6}
+        >
+          <option key="all" value="">
+            All
+          </option>
+          {clientData.map((clients, index) => {
+            return (
+              <option key={index} value={clients.client_id}>
+                {clients.company} / {clients.first_name} {clients.last_name}
+              </option>
+            );
+          })}
+        </Select>
+        {filteredList.length > 0 && (
           <TableContainer mt={12} bg="white" borderRadius={5} shadow="lg">
             <Table variant="simple">
               <Thead bg="brand.primary">
@@ -115,13 +158,13 @@ const Projects = () => {
                   <Th color={"white " + "!important"}>Edit</Th>
                   <Th color={"white " + "!important"}>Project Name</Th>
                   <Th color={"white " + "!important"}>Hourly Rate</Th>
-                  <Th color={"white " + "!important"}>Client / Company</Th>
+                  <Th color={"white " + "!important"}>Company / Client</Th>
                   <Th color={"white " + "!important"}>Status</Th>
                   <Th color={"white " + "!important"}>Delete</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {projects.map((project, index) => (
+                {filteredList.map((project, index) => (
                   <ProjectItem
                     key={index}
                     {...project}
@@ -141,6 +184,9 @@ const Projects = () => {
         isOpen={isNewOpen}
         onClose={onNewClose}
         setProjects={setProjects}
+        setFilteredList={setFilteredList}
+        filterByClient={filterByClient}
+        filterValue={filterValue}
         getProjectData={getProjectData}
         clientData={clientData}
       />
@@ -148,6 +194,9 @@ const Projects = () => {
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
         setProjects={setProjects}
+        setFilteredList={setFilteredList}
+        filterByClient={filterByClient}
+        filterValue={filterValue}
         getProjectData={getProjectData}
         editProjectData={editProjectData}
         clientData={clientData}

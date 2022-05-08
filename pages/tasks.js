@@ -64,7 +64,7 @@ const Tasks = () => {
       <Header />
       <Container maxW="md" pt={5}>
         <Flex justify={"space-between"}>
-          <Heading as="h2" size="lg" fontWeight={400}>
+          <Heading as="h2" size="lg" fontWeight={700}>
             Task Types
           </Heading>
           <Button

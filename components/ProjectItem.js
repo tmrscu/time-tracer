@@ -40,7 +40,10 @@ const ProjectItem = ({
       </Td>
       <Td>{project_name}</Td>
       <Td>${hourly_rate}</Td>
-      <Td>{clients.first_name} {clients.last_name} / {clients.company}</Td>
+      {console.log(clients)}
+      <Td>
+        {clients.company} / {clients.first_name} {clients.last_name}
+      </Td>
       <Td w={2}>{status ? "Active" : "Inactive"} </Td>
       <Td
         onClick={handleDelete}
