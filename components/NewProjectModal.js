@@ -11,6 +11,11 @@ import {
   FormControl,
   FormLabel,
   Input,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   ModalFooter,
   Button,
   Switch,
@@ -24,6 +29,9 @@ const NewProjectModal = ({
   isOpen,
   onClose,
   setProjects,
+  setFilteredList,
+  filterByClient,
+  filterValue,
   getProjectData,
   clientData,
 }) => {
@@ -85,9 +93,9 @@ const NewProjectModal = ({
       } else {
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
+          setFilteredList(filterByClient(results, filterValue)); // Refresh filter list
           setProjectNameInput("");
           setHourlyRateInput("");
-          setClientIdInput(clientData[0].client_id);
           setStatusInput(true);
           onClose(); // Closes Modal
         });
@@ -108,7 +116,7 @@ const NewProjectModal = ({
       <ModalOverlay />
       <ModalContent>
         <chakra.form onSubmit={(e) => submitHandler(e)}>
-          <ModalHeader>Update Project</ModalHeader>
+          <ModalHeader>Add New Project</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             {error && (
@@ -128,15 +136,23 @@ const NewProjectModal = ({
 
             <FormControl mt={4}>
               <FormLabel>Hourly Rate</FormLabel>
-              <Input
+              <NumberInput
                 required
+                onChange={(valueString) => setHourlyRateInput(valueString)}
                 value={hourlyRateInput}
-                onChange={(e) => setHourlyRateInput(e.target.value)}
-              />
+                step={0.01}
+                min={0}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Client / Company</FormLabel>
+              <FormLabel>Company / Client</FormLabel>
               <Select
                 name="client"
                 type="client"
@@ -149,8 +165,8 @@ const NewProjectModal = ({
                 {clientData.map((clients, index) => {
                   return (
                     <option key={index} value={clients.client_id}>
-                      {clients.first_name} {clients.last_name} /{" "}
-                      {clients.company}
+                      {clients.company} / {clients.first_name}{" "}
+                      {clients.last_name}
                     </option>
                   );
                 })}
