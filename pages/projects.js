@@ -15,6 +15,7 @@ import {
   Tr,
   Th,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import { AddIcon } from "@chakra-ui/icons";
@@ -26,7 +27,7 @@ import DeleteDialog from "../components/DeleteDialog";
 // The Projects page
 const Projects = () => {
   const [projects, setProjects] = useState([]);
-  const [editProjectData, setEditProjectData] = useState({});
+  const [editProjectData, setEditProjectData] = useState({clients: {}});
   const [deleteProjectId, setDeleteProjectId] = useState();
   const [clientData, setClientData] = useState([{}]);
   const [filterValue, setFilterValue] = useState("");
@@ -35,7 +36,8 @@ const Projects = () => {
   const getProjectData = async () => {
     let { data: projects, error } = await supabaseClient
       .from("projects")
-      .select(`*, clients!clients_client_id_fkey (*)`);
+      .select(`*, clients!clients_client_id_fkey (*)`)
+      .order("client_id", { ascending: true });
     return projects;
   };
 
@@ -150,33 +152,91 @@ const Projects = () => {
             );
           })}
         </Select>
-        {filteredList.length > 0 && (
-          <TableContainer mt={12} bg="white" borderRadius={5} shadow="lg">
-            <Table variant="simple">
-              <Thead bg="brand.primary">
-                <Tr>
-                  <Th color={"white " + "!important"}>Edit</Th>
-                  <Th color={"white " + "!important"}>Project Name</Th>
-                  <Th color={"white " + "!important"}>Hourly Rate</Th>
-                  <Th color={"white " + "!important"}>Company / Client</Th>
-                  <Th color={"white " + "!important"}>Status</Th>
-                  <Th color={"white " + "!important"}>Delete</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {filteredList.map((project, index) => (
-                  <ProjectItem
-                    key={index}
-                    {...project}
-                    onUpdateOpen={onUpdateOpen}
-                    onDeleteOpen={onDeleteOpen}
-                    setEditProjectData={setEditProjectData}
-                    setDeleteProjectId={setDeleteProjectId}
-                  />
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+        {filteredList.filter((filteredList) => filteredList.status == true)
+          .length > 0 ? (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Active Projects
+            </Heading>
+            <TableContainer bg="white" borderRadius={5} shadow="lg">
+              <Table variant="simple">
+                <Thead bg="brand.primary">
+                  <Tr>
+                    <Th color={"white " + "!important"}>Edit</Th>
+                    <Th color={"white " + "!important"}>Project Name</Th>
+                    <Th color={"white " + "!important"}>Hourly Rate</Th>
+                    <Th color={"white " + "!important"}>Company / Client</Th>
+                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th color={"white " + "!important"}>Delete</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {filteredList
+                    .filter((filteredList) => filteredList.status == true)
+                    .map((project, index) => (
+                      <ProjectItem
+                        key={index}
+                        {...project}
+                        onUpdateOpen={onUpdateOpen}
+                        onDeleteOpen={onDeleteOpen}
+                        setEditProjectData={setEditProjectData}
+                        setDeleteProjectId={setDeleteProjectId}
+                      />
+                    ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Active Projects
+            </Heading>
+            <Text>There are no active projects.</Text>
+          </>
+        )}
+        {filteredList.filter((filteredList) => filteredList.status == false)
+          .length > 0 ? (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Inactive Projects
+            </Heading>
+            <TableContainer bg="white" borderRadius={5} shadow="lg">
+              <Table variant="simple">
+                <Thead bg="brand.primary">
+                  <Tr>
+                    <Th color={"white " + "!important"}>Edit</Th>
+                    <Th color={"white " + "!important"}>Project Name</Th>
+                    <Th color={"white " + "!important"}>Hourly Rate</Th>
+                    <Th color={"white " + "!important"}>Company / Client</Th>
+                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th color={"white " + "!important"}>Delete</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {filteredList
+                    .filter((filteredList) => filteredList.status == false)
+                    .map((project, index) => (
+                      <ProjectItem
+                        key={index}
+                        {...project}
+                        onUpdateOpen={onUpdateOpen}
+                        onDeleteOpen={onDeleteOpen}
+                        setEditProjectData={setEditProjectData}
+                        setDeleteProjectId={setDeleteProjectId}
+                      />
+                    ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Active Projects
+            </Heading>
+            <Text>There are no inactive projects.</Text>
+          </>
         )}
       </Container>
 

@@ -163,6 +163,7 @@ const UpdateProjectModal = ({
                 type="client"
                 autoComplete="client"
                 required
+                isDisabled={editProjectData.clients.status ? false : true}
                 value={clientIdInput}
                 onChange={(e) => setClientIdInput(e.target.value)}
                 mb={6}
@@ -184,11 +185,21 @@ const UpdateProjectModal = ({
               </FormLabel>
               <Switch
                 isChecked={statusInput}
+                isDisabled={editProjectData.clients.status ? false : true}
                 onChange={() =>
                   setStatusInput((setStatusInput) => !setStatusInput)
                 }
               />
             </FormControl>
+
+            {editProjectData.clients.status ? (
+              <></>
+            ) : (
+              <Text mt={4} color={"red"}>
+                Projects associated to an inactive client cannot have their
+                company/client or status updated.
+              </Text>
+            )}
           </ModalBody>
 
           <ModalFooter>
