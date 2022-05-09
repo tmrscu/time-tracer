@@ -14,9 +14,10 @@ import {
   Tr,
   Th,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import NewClientModal from "../components/NewClientModal";
 import ClientItem from "../components/ClientItem";
 import EditClientModal from "../components/EditClientModal";
@@ -32,7 +33,8 @@ const Clients = () => {
   const getClientData = async () => {
     let { data: clients, error } = await supabaseClient
       .from("clients")
-      .select("*");
+      .select("*")
+      .order("company", { ascending: true });
     return clients;
   };
 
@@ -97,35 +99,93 @@ const Clients = () => {
             New
           </Button>
         </Flex>
-        {clients.length > 0 && (
-          <TableContainer mt={12} bg="white" borderRadius={5} shadow="lg">
-            <Table variant="simple">
-              <Thead bg="brand.primary">
-                <Tr>
-                  <Th color={"white " + "!important"}>Edit</Th>
-                  <Th color={"white " + "!important"}>Company Name</Th>
-                  <Th color={"white " + "!important"}>Email</Th>
-                  <Th color={"white " + "!important"}>First Name</Th>
-                  <Th color={"white " + "!important"}>Last Name</Th>
-                  <Th color={"white " + "!important"}>Contact Number</Th>
-                  <Th color={"white " + "!important"}>Status</Th>
-                  <Th color={"white " + "!important"}>Delete</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {clients.map((client, index) => (
-                  <ClientItem
-                    key={index}
-                    {...client}
-                    onUpdateOpen={onUpdateOpen}
-                    onDeleteOpen={onDeleteOpen}
-                    setEditClientData={setEditClientData}
-                    setDeleteClientId={setDeleteClientId}
-                  />
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+        {clients.filter((client) => client.status == true).length > 0 ? (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Active Clients
+            </Heading>
+            <TableContainer bg="white" borderRadius={5} shadow="lg">
+              <Table variant="simple">
+                <Thead bg="brand.primary">
+                  <Tr>
+                    <Th color={"white " + "!important"}>Edit</Th>
+                    <Th color={"white " + "!important"}>Company Name</Th>
+                    <Th color={"white " + "!important"}>Email</Th>
+                    <Th color={"white " + "!important"}>First Name</Th>
+                    <Th color={"white " + "!important"}>Last Name</Th>
+                    <Th color={"white " + "!important"}>Contact Number</Th>
+                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th color={"white " + "!important"}>Delete</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {clients
+                    .filter((client) => client.status == true)
+                    .map((client, index) => (
+                      <ClientItem
+                        key={index}
+                        {...client}
+                        onUpdateOpen={onUpdateOpen}
+                        onDeleteOpen={onDeleteOpen}
+                        setEditClientData={setEditClientData}
+                        setDeleteClientId={setDeleteClientId}
+                      />
+                    ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Active Clients
+            </Heading>
+            <Text>There are no active clients.</Text>
+          </>
+        )}
+        {clients.filter((client) => client.status == false).length > 0 ? (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Inactive Clients
+            </Heading>
+            <TableContainer bg="white" borderRadius={5} shadow="lg">
+              <Table variant="simple">
+                <Thead bg="brand.primary">
+                  <Tr>
+                    <Th color={"white " + "!important"}>Edit</Th>
+                    <Th color={"white " + "!important"}>Company Name</Th>
+                    <Th color={"white " + "!important"}>Email</Th>
+                    <Th color={"white " + "!important"}>First Name</Th>
+                    <Th color={"white " + "!important"}>Last Name</Th>
+                    <Th color={"white " + "!important"}>Contact Number</Th>
+                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th color={"white " + "!important"}>Delete</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {clients
+                    .filter((client) => client.status == false)
+                    .map((client, index) => (
+                      <ClientItem
+                        key={index}
+                        {...client}
+                        onUpdateOpen={onUpdateOpen}
+                        onDeleteOpen={onDeleteOpen}
+                        setEditClientData={setEditClientData}
+                        setDeleteClientId={setDeleteClientId}
+                      />
+                    ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <>
+            <Heading as="h4" size="md" mt={10} mb={4}>
+              Inactive Clients
+            </Heading>
+            <Text>There are no inactive clients.</Text>
+          </>
         )}
       </Container>
 

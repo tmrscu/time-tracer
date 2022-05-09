@@ -20,6 +20,7 @@ const ProjectItem = ({
       hourly_rate,
       status,
       client_id,
+      clients
     });
     onUpdateOpen();
   };
@@ -40,7 +41,6 @@ const ProjectItem = ({
       </Td>
       <Td>{project_name}</Td>
       <Td>${hourly_rate}</Td>
-      {console.log(clients)}
       <Td>
         {clients.company} / {clients.first_name} {clients.last_name}
       </Td>
