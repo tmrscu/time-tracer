@@ -44,7 +44,6 @@ const ProjectItem = ({
       <Td>
         {clients.company} / {clients.first_name} {clients.last_name}
       </Td>
-      <Td w={2}>{status ? "Active" : "Inactive"} </Td>
       <Td
         onClick={handleDelete}
         cursor={"pointer"}

@@ -24,6 +24,8 @@ const NewClientModal = ({
   onClose,
   user,
   setClients,
+  setSortedClients,
+  setSortedField,
   getClientData,
 }) => {
   const [companyNameInput, setCompanyNameInput] = useState("");
@@ -102,6 +104,8 @@ const NewClientModal = ({
       } else {
         getClientData().then((results) => {
           setClients(results); // Refresh client data
+          setSortedClients(results);
+          setSortedField(null);
           setCompanyNameInput("");
           setEmailInput("");
           setFirstNameInput("");

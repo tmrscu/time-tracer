@@ -29,12 +29,13 @@ const UpdateProjectModal = ({
   isOpen,
   onClose,
   setProjects,
-  setFilteredList,
+  setSortedProjects,
+  setSortedField,
   filterByClient,
   filterValue,
   getProjectData,
   editProjectData,
-  clientData,
+  activeClientData,
 }) => {
   const [projectNameInput, setProjectNameInput] = useState("");
   const [hourlyRateInput, setHourlyRateInput] = useState(0.0);
@@ -101,7 +102,8 @@ const UpdateProjectModal = ({
       } else {
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
-          setFilteredList(filterByClient(results, filterValue)); // Refresh filter list
+          setSortedProjects(filterByClient(results, filterValue)); // Refresh sorted list
+          setSortedField(null);
           onClose(); // Closes Modal
         });
       }
@@ -129,6 +131,14 @@ const UpdateProjectModal = ({
                 <AlertIcon />
                 <Text textAlign="center">{error}</Text>
               </Alert>
+            )}
+            {editProjectData.clients.status ? (
+              <></>
+            ) : (
+              <Text mb={6} color={"red"}>
+                Projects associated to an inactive client cannot have their
+                company/client or status updated.
+              </Text>
             )}
             <FormControl>
               <FormLabel>Project Name</FormLabel>
@@ -168,14 +178,22 @@ const UpdateProjectModal = ({
                 onChange={(e) => setClientIdInput(e.target.value)}
                 mb={6}
               >
-                {clientData.map((clients, index) => {
-                  return (
-                    <option key={index} value={clients.client_id}>
-                      {clients.company} / {clients.first_name}{" "}
-                      {clients.last_name}
-                    </option>
-                  );
-                })}
+                {editProjectData.clients.status ? (
+                  activeClientData.map((clients, index) => {
+                    return (
+                      <option key={index} value={clients.client_id}>
+                        {clients.company} / {clients.first_name}{" "}
+                        {clients.last_name}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <option>
+                    {editProjectData.clients.company} /{" "}
+                    {editProjectData.clients.first_name}{" "}
+                    {editProjectData.clients.last_name}
+                  </option>
+                )}
               </Select>
             </FormControl>
 
@@ -191,15 +209,6 @@ const UpdateProjectModal = ({
                 }
               />
             </FormControl>
-
-            {editProjectData.clients.status ? (
-              <></>
-            ) : (
-              <Text mt={4} color={"red"}>
-                Projects associated to an inactive client cannot have their
-                company/client or status updated.
-              </Text>
-            )}
           </ModalBody>
 
           <ModalFooter>

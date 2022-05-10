@@ -18,7 +18,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import NewProjectModal from "../components/NewProjectModal";
 import ProjectItem from "../components/ProjectItem";
 import EditProjectModal from "../components/EditProjectModal";
@@ -27,11 +27,14 @@ import DeleteDialog from "../components/DeleteDialog";
 // The Projects page
 const Projects = () => {
   const [projects, setProjects] = useState([]);
-  const [editProjectData, setEditProjectData] = useState({clients: {}});
+  const [editProjectData, setEditProjectData] = useState({ clients: {} });
   const [deleteProjectId, setDeleteProjectId] = useState();
-  const [clientData, setClientData] = useState([{}]);
+  const [allClientData, setAllClientData] = useState([]);
+  const [activeClientData, setActiveClientData] = useState([{}]);
   const [filterValue, setFilterValue] = useState("");
-  const [filteredList, setFilteredList] = useState([]);
+  const [sortedProjects, setSortedProjects] = useState([]);
+  const [sortField, setSortedField] = useState(null);
+  const [sortOrder, setSortOrder] = useState(true);
 
   const getProjectData = async () => {
     let { data: projects, error } = await supabaseClient
@@ -48,14 +51,73 @@ const Projects = () => {
     return clients;
   };
 
+  const sortData = (sortKey) => {
+    // NOTE = on edit or new, the table defaults to no sorting
+
+    let tempSortOrder; // This fixes the problem with slow state updates
+    // Check ascending or descending
+    if (sortKey === sortField) {
+      if (sortOrder === false) {
+        setSortOrder(true);
+        tempSortOrder = true;
+      } else {
+        setSortOrder(false);
+        tempSortOrder = false;
+      }
+    } else {
+      setSortOrder(true);
+      tempSortOrder = true;
+    }
+
+    // Sort the data
+    if (sortKey == "company") {
+      setSortedProjects(
+        sortedProjects.sort((x, y) => {
+          let a = x.clients[sortKey].toUpperCase(),
+            b = y.clients[sortKey].toUpperCase();
+
+          if (tempSortOrder == true) {
+            return a == b ? 0 : a > b ? 1 : -1;
+          } else {
+            return a == b ? 0 : a > b ? -1 : 1;
+          }
+        })
+      );
+    } else if (sortKey != "hourly_rate") {
+      setSortedProjects(
+        sortedProjects.sort((x, y) => {
+          let a = x[sortKey].toUpperCase(),
+            b = y[sortKey].toUpperCase();
+
+          if (tempSortOrder == true) {
+            return a == b ? 0 : a > b ? 1 : -1;
+          } else {
+            return a == b ? 0 : a > b ? -1 : 1;
+          }
+        })
+      );
+    } else {
+      setSortedProjects(
+        sortedProjects.sort((x, y) => {
+          if (tempSortOrder == true) {
+            return x[sortKey] - y[sortKey];
+          } else {
+            return y[sortKey] - x[sortKey];
+          }
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     getProjectData().then((results) => {
       setProjects(results);
-      setFilteredList(filterByClient(results, ""));
+      setSortedProjects(results);
     });
 
     getClientData().then((results) => {
-      setClientData(results);
+      setAllClientData(results);
+      setActiveClientData(filterByActiveStatus(results));
     });
   }, []);
 
@@ -67,6 +129,14 @@ const Projects = () => {
 
     const filteredClients = filteredData.filter(
       (project) => project.client_id == filterCheck
+    );
+
+    return filteredClients;
+  };
+
+  const filterByActiveStatus = (filteredData) => {
+    const filteredClients = filteredData.filter(
+      (client) => client.status == true
     );
 
     return filteredClients;
@@ -101,7 +171,7 @@ const Projects = () => {
       // Refresh the project data
       getProjectData().then((results) => {
         setProjects(results);
-        setFilteredList(results);
+        setSortedProjects(results);
       });
     }
     setDeleteProjectId(null);
@@ -137,22 +207,26 @@ const Projects = () => {
           value={filterValue}
           onChange={(e) => {
             setFilterValue(e.target.value);
-            setFilteredList(filterByClient(projects, e.target.value));
+            setSortedProjects(filterByClient(projects, e.target.value));
           }}
           mb={6}
         >
           <option key="all" value="">
             All
           </option>
-          {clientData.map((clients, index) => {
-            return (
-              <option key={index} value={clients.client_id}>
-                {clients.company} / {clients.first_name} {clients.last_name}
-              </option>
-            );
-          })}
+          {allClientData.length > 0 ? (
+            allClientData.map((clients, index) => {
+              return (
+                <option key={index} value={clients.client_id}>
+                  {clients.company} / {clients.first_name} {clients.last_name}
+                </option>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </Select>
-        {filteredList.filter((filteredList) => filteredList.status == true)
+        {sortedProjects.filter((sortedProject) => sortedProject.status == true)
           .length > 0 ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
@@ -163,16 +237,111 @@ const Projects = () => {
                 <Thead bg="brand.primary">
                   <Tr>
                     <Th color={"white " + "!important"}>Edit</Th>
-                    <Th color={"white " + "!important"}>Project Name</Th>
-                    <Th color={"white " + "!important"}>Hourly Rate</Th>
-                    <Th color={"white " + "!important"}>Company / Client</Th>
-                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("project_name");
+                        sortData("project_name");
+                      }}
+                    >
+                      Project Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "project_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "project_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("hourly_rate");
+                        sortData("hourly_rate");
+                      }}
+                    >
+                      Hourly Rate
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "hourly_rate"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "hourly_rate"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("company");
+                        sortData("company");
+                      }}
+                    >
+                      Company / Client
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
                     <Th color={"white " + "!important"}>Delete</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {filteredList
-                    .filter((filteredList) => filteredList.status == true)
+                  {sortedProjects
+                    .filter((sortedProject) => sortedProject.status == true)
                     .map((project, index) => (
                       <ProjectItem
                         key={index}
@@ -195,7 +364,7 @@ const Projects = () => {
             <Text>There are no active projects.</Text>
           </>
         )}
-        {filteredList.filter((filteredList) => filteredList.status == false)
+        {sortedProjects.filter((sortedProject) => sortedProject.status == false)
           .length > 0 ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
@@ -206,16 +375,111 @@ const Projects = () => {
                 <Thead bg="brand.primary">
                   <Tr>
                     <Th color={"white " + "!important"}>Edit</Th>
-                    <Th color={"white " + "!important"}>Project Name</Th>
-                    <Th color={"white " + "!important"}>Hourly Rate</Th>
-                    <Th color={"white " + "!important"}>Company / Client</Th>
-                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("project_name");
+                        sortData("project_name");
+                      }}
+                    >
+                      Project Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "project_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "project_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("hourly_rate");
+                        sortData("hourly_rate");
+                      }}
+                    >
+                      Hourly Rate
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "hourly_rate"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "hourly_rate"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("company");
+                        sortData("company");
+                      }}
+                    >
+                      Company / Client
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
                     <Th color={"white " + "!important"}>Delete</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {filteredList
-                    .filter((filteredList) => filteredList.status == false)
+                  {sortedProjects
+                    .filter((sortedProject) => sortedProject.status == false)
                     .map((project, index) => (
                       <ProjectItem
                         key={index}
@@ -244,22 +508,24 @@ const Projects = () => {
         isOpen={isNewOpen}
         onClose={onNewClose}
         setProjects={setProjects}
-        setFilteredList={setFilteredList}
+        setSortedProjects={setSortedProjects}
+        setSortedField={setSortedField}
         filterByClient={filterByClient}
         filterValue={filterValue}
         getProjectData={getProjectData}
-        clientData={clientData}
+        activeClientData={activeClientData}
       />
       <EditProjectModal
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
         setProjects={setProjects}
-        setFilteredList={setFilteredList}
+        setSortedProjects={setSortedProjects}
+        setSortedField={setSortedField}
         filterByClient={filterByClient}
         filterValue={filterValue}
         getProjectData={getProjectData}
         editProjectData={editProjectData}
-        clientData={clientData}
+        activeClientData={activeClientData}
       />
       <DeleteDialog
         isOpen={isDeleteOpen}
