@@ -29,11 +29,12 @@ const NewProjectModal = ({
   isOpen,
   onClose,
   setProjects,
-  setFilteredList,
+  setSortedProjects,
+  setSortedField,
   filterByClient,
   filterValue,
   getProjectData,
-  clientData,
+  activeClientData,
 }) => {
   const [projectNameInput, setProjectNameInput] = useState("");
   const [hourlyRateInput, setHourlyRateInput] = useState("");
@@ -45,8 +46,8 @@ const NewProjectModal = ({
 
   // On page load
   useEffect(() => {
-    setClientIdInput(clientData[0].client_id);
-  }, [clientData]);
+    setClientIdInput(activeClientData[0].client_id);
+  }, [activeClientData]);
 
   const isUnique = async (project) => {
     const { data, error } = await supabaseClient
@@ -68,7 +69,6 @@ const NewProjectModal = ({
       // Get all records with matching company names
       await isUnique(projectNameInput).then((results) => {
         canCreate = results;
-        console.log(results);
       });
       // Error if project name record already exists
       if (canCreate.length != 0) {
@@ -93,7 +93,8 @@ const NewProjectModal = ({
       } else {
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
-          setFilteredList(filterByClient(results, filterValue)); // Refresh filter list
+          setSortedProjects(filterByClient(results, filterValue)); // Refresh sorted list
+          setSortedField(null);
           setProjectNameInput("");
           setHourlyRateInput("");
           setStatusInput(true);
@@ -162,7 +163,7 @@ const NewProjectModal = ({
                 onChange={(e) => setClientIdInput(e.target.value)}
                 mb={6}
               >
-                {clientData.map((clients, index) => {
+                {activeClientData.map((clients, index) => {
                   return (
                     <option key={index} value={clients.client_id}>
                       {clients.company} / {clients.first_name}{" "}

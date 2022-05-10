@@ -46,7 +46,6 @@ const ClientItem = ({
       <Td>{first_name}</Td>
       <Td>{last_name}</Td>
       <Td>{contact_number}</Td>
-      <Td w={2}>{status ? "Active" : "Inactive"} </Td>
       <Td
         onClick={handleDelete}
         cursor={"pointer"}

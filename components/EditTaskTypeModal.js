@@ -15,7 +15,7 @@ import {
   chakra,
   Alert,
   AlertIcon,
-  Text
+  Text,
 } from "@chakra-ui/react";
 
 const UpdateClientModal = ({
@@ -24,6 +24,8 @@ const UpdateClientModal = ({
   editTaskTypeData,
   getTaskTypeData,
   setTaskTypes,
+  setSortedTaskTypes,
+  setSortedField,
 }) => {
   const [taskTypeInput, setTaskTypeInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +72,8 @@ const UpdateClientModal = ({
       } else {
         getTaskTypeData().then((results) => {
           setTaskTypes(results); // Refresh project data
+          setSortedTaskTypes(results);
+          setSortedField(null);
           onClose(); // Closes Modal
         });
       }
@@ -98,7 +102,7 @@ const UpdateClientModal = ({
           <ModalHeader>Update Task Type</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-          {error && (
+            {error && (
               <Alert status="error" mb="6">
                 <AlertIcon />
                 <Text textAlign="center">{error}</Text>

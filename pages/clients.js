@@ -27,6 +27,9 @@ import DeleteDialog from "../components/DeleteDialog";
 const Clients = () => {
   const { user } = useAuth();
   const [clients, setClients] = useState([]);
+  const [sortedClients, setSortedClients] = useState([]);
+  const [sortField, setSortedField] = useState("company");
+  const [sortOrder, setSortOrder] = useState(true);
   const [editClientData, setEditClientData] = useState({});
   const [deleteClientId, setDeleteClientId] = useState();
 
@@ -38,9 +41,55 @@ const Clients = () => {
     return clients;
   };
 
+  const sortData = (sortKey) => {
+    // NOTE = on edit or new, the table defaults to no sorting
+
+    let tempSortOrder; // This fixes the problem with slow state updates
+    // Check ascending or descending
+    if (sortKey === sortField) {
+      if (sortOrder === false) {
+        setSortOrder(true);
+        tempSortOrder = true;
+      } else {
+        setSortOrder(false);
+        tempSortOrder = false;
+      }
+    } else {
+      setSortOrder(true);
+      tempSortOrder = true;
+    }
+
+    // Sort the data
+    if (sortKey != "contact_number") {
+      setSortedClients(
+        sortedClients.sort((x, y) => {
+          let a = x[sortKey].toUpperCase(),
+            b = y[sortKey].toUpperCase();
+
+          if (tempSortOrder == true) {
+            return a == b ? 0 : a > b ? 1 : -1;
+          } else {
+            return a == b ? 0 : a > b ? -1 : 1;
+          }
+        })
+      );
+    } else {
+      setSortedClients(
+        sortedClients.sort((x, y) => {
+          if (tempSortOrder == true) {
+            return x[sortKey] - y[sortKey];
+          } else {
+            return y[sortKey] - x[sortKey];
+          }
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     getClientData().then((results) => {
       setClients(results);
+      setSortedClients(results);
     });
   }, []);
 
@@ -70,9 +119,10 @@ const Clients = () => {
       .eq("client_id", id);
 
     if (!error) {
-      // Refresh the task types
-      getClientData().then((tasks) => {
-        setClients(tasks);
+      // Refresh the clients
+      getClientData().then((clients) => {
+        setClients(clients);
+        setSortedClients(clients);
       });
     }
     setDeleteClientId(null);
@@ -99,8 +149,10 @@ const Clients = () => {
             New
           </Button>
         </Flex>
-        {clients.filter((client) => client.status == true).length > 0 ? (
+
+        {sortedClients.filter((client) => client.status == true).length > 0 ? (
           <>
+            {console.log(sortedClients)}
             <Heading as="h4" size="md" mt={10} mb={4}>
               Active Clients
             </Heading>
@@ -109,12 +161,171 @@ const Clients = () => {
                 <Thead bg="brand.primary">
                   <Tr>
                     <Th color={"white " + "!important"}>Edit</Th>
-                    <Th color={"white " + "!important"}>Company Name</Th>
-                    <Th color={"white " + "!important"}>Email</Th>
-                    <Th color={"white " + "!important"}>First Name</Th>
-                    <Th color={"white " + "!important"}>Last Name</Th>
-                    <Th color={"white " + "!important"}>Contact Number</Th>
-                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("company");
+                        sortData("company");
+                      }}
+                    >
+                      Company Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("email");
+                        sortData("email");
+                      }}
+                    >
+                      Email
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "email"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "email"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("first_name");
+                        sortData("first_name");
+                      }}
+                    >
+                      First Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "first_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "first_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("last_name");
+                        sortData("last_name");
+                      }}
+                    >
+                      Last Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "last_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "last_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("contact_number");
+                        sortData("contact_number");
+                      }}
+                    >
+                      Contact Number
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "contact_number"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "contact_number"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
                     <Th color={"white " + "!important"}>Delete</Th>
                   </Tr>
                 </Thead>
@@ -143,7 +354,7 @@ const Clients = () => {
             <Text>There are no active clients.</Text>
           </>
         )}
-        {clients.filter((client) => client.status == false).length > 0 ? (
+        {sortedClients.filter((client) => client.status == false).length > 0 ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Inactive Clients
@@ -153,12 +364,171 @@ const Clients = () => {
                 <Thead bg="brand.primary">
                   <Tr>
                     <Th color={"white " + "!important"}>Edit</Th>
-                    <Th color={"white " + "!important"}>Company Name</Th>
-                    <Th color={"white " + "!important"}>Email</Th>
-                    <Th color={"white " + "!important"}>First Name</Th>
-                    <Th color={"white " + "!important"}>Last Name</Th>
-                    <Th color={"white " + "!important"}>Contact Number</Th>
-                    <Th color={"white " + "!important"}>Status</Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("company");
+                        sortData("company");
+                      }}
+                    >
+                      Company Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "company"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("email");
+                        sortData("email");
+                      }}
+                    >
+                      Email
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "email"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "email"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("first_name");
+                        sortData("first_name");
+                      }}
+                    >
+                      First Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "first_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "first_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("last_name");
+                        sortData("last_name");
+                      }}
+                    >
+                      Last Name
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "last_name"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "last_name"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
+                    <Th
+                      color={"white " + "!important"}
+                      onClick={() => {
+                        setSortedField("contact_number");
+                        sortData("contact_number");
+                      }}
+                    >
+                      Contact Number
+                      <TriangleUpIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "contact_number"
+                              ? sortOrder == false
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                      <TriangleDownIcon
+                        ml={1}
+                        mb={1}
+                        style={{
+                          display:
+                            sortField == "contact_number"
+                              ? sortOrder == true
+                                ? "inline-block"
+                                : "none"
+                              : "none",
+                        }}
+                      />
+                    </Th>
                     <Th color={"white " + "!important"}>Delete</Th>
                   </Tr>
                 </Thead>
@@ -194,6 +564,8 @@ const Clients = () => {
         onClose={onNewClose}
         user={user}
         setClients={setClients}
+        setSortedClients={setSortedClients}
+        setSortedField={setSortedField}
         getClientData={getClientData}
       />
       <EditClientModal
@@ -201,6 +573,8 @@ const Clients = () => {
         onClose={onUpdateClose}
         user={user}
         setClients={setClients}
+        setSortedClients={setSortedClients}
+        setSortedField={setSortedField}
         getClientData={getClientData}
         editClientData={editClientData}
       />

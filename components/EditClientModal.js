@@ -24,6 +24,8 @@ const UpdateClientModal = ({
   onClose,
   user,
   setClients,
+  setSortedClients,
+  setSortedField,
   getClientData,
   editClientData,
 }) => {
@@ -117,6 +119,8 @@ const UpdateClientModal = ({
       } else {
         getClientData().then((results) => {
           setClients(results); // Refresh client data
+          setSortedClients(results);
+          setSortedField(null);
           onClose(); // Closes Modal
         });
       }

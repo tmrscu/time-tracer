@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabaseClient } from "../utils/client";
-import { useAuth } from '../context/Auth'
+import { useAuth } from "../context/Auth";
 import {
   Box,
   Heading,
@@ -16,7 +16,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import NewTaskTypeModal from "../components/NewTaskTypeModal";
 import TaskTypeItem from "../components/TaskTypeItem";
 import EditTaskTypeModal from "../components/EditTaskTypeModal";
@@ -25,19 +25,57 @@ import DeleteDialog from "../components/DeleteDialog";
 // The Task Types Page
 const Tasks = () => {
   const [taskTypes, setTaskTypes] = useState([]);
+  const [sortedTaskTypes, setSortedTaskTypes] = useState([]);
+  const [sortField, setSortedField] = useState("task_name");
+  const [sortOrder, setSortOrder] = useState(true);
   const [editTaskTypeData, setTaskTypeData] = useState({});
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const getTaskTypeData = async () => {
     let { data: tasks, error } = await supabaseClient
       .from("task_types")
-      .select("*");
+      .select("*")
+      .order("task_name", { ascending: true });
     return tasks;
+  };
+
+  const sortData = (sortKey) => {
+    // NOTE = on edit or new, the table defaults to no sorting
+
+    let tempSortOrder; // This fixes the problem with slow state updates
+    // Check ascending or descending
+    if (sortKey === sortField) {
+      if (sortOrder === false) {
+        setSortOrder(true);
+        tempSortOrder = true;
+      } else {
+        setSortOrder(false);
+        tempSortOrder = false;
+      }
+    } else {
+      setSortOrder(true);
+      tempSortOrder = true;
+    }
+
+    // Sort the data
+    setSortedTaskTypes(
+      sortedTaskTypes.sort((x, y) => {
+        let a = x[sortKey].toUpperCase(),
+          b = y[sortKey].toUpperCase();
+
+        if (tempSortOrder == true) {
+          return a == b ? 0 : a > b ? 1 : -1;
+        } else {
+          return a == b ? 0 : a > b ? -1 : 1;
+        }
+      })
+    );
   };
 
   useEffect(() => {
     getTaskTypeData().then((results) => {
       setTaskTypes(results);
+      setSortedTaskTypes(results);
     });
   }, []);
 
@@ -81,8 +119,42 @@ const Tasks = () => {
             <Table variant="simple">
               <Thead bg="brand.primary">
                 <Tr>
-                  <Th pr={5} color={"white " + "!important"}>Edit</Th>
-                  <Th color={"white " + "!important"}>Task Type</Th>
+                  <Th pr={5} color={"white " + "!important"}>
+                    Edit
+                  </Th>
+                  <Th
+                    color={"white " + "!important"}
+                    onClick={() => {
+                      setSortedField("task_name");
+                      sortData("task_name");
+                    }}
+                  >
+                    Task Type
+                    <TriangleUpIcon
+                      ml={1}
+                      mb={1}
+                      style={{
+                        display:
+                          sortField == "task_name"
+                            ? sortOrder == false
+                              ? "inline-block"
+                              : "none"
+                            : "none",
+                      }}
+                    />
+                    <TriangleDownIcon
+                      ml={1}
+                      mb={1}
+                      style={{
+                        display:
+                          sortField == "task_name"
+                            ? sortOrder == true
+                              ? "inline-block"
+                              : "none"
+                            : "none",
+                      }}
+                    />
+                  </Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -107,6 +179,8 @@ const Tasks = () => {
         getTaskTypeData={getTaskTypeData}
         user={user}
         setTaskTypes={setTaskTypes}
+        setSortedTaskTypes={setSortedTaskTypes}
+        setSortedField={setSortedField}
       />
       <EditTaskTypeModal
         isOpen={isUpdateOpen}
@@ -114,6 +188,8 @@ const Tasks = () => {
         editTaskTypeData={editTaskTypeData}
         getTaskTypeData={getTaskTypeData}
         setTaskTypes={setTaskTypes}
+        setSortedTaskTypes={setSortedTaskTypes}
+        setSortedField={setSortedField}
       />
     </Box>
   );

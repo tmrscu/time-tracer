@@ -24,6 +24,8 @@ const NewTaskType = ({
   getTaskTypeData,
   user,
   setTaskTypes,
+  setSortedTaskTypes,
+  setSortedField,
 }) => {
   const [taskTypeInput, setTaskTypeInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -67,6 +69,8 @@ const NewTaskType = ({
       } else {
         getTaskTypeData().then((results) => {
           setTaskTypes(results); // Refresh project data
+          setSortedTaskTypes(results);
+          setSortedField(null);
           setTaskTypeInput("");
           onClose(); // Closes Modal
         });
