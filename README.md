@@ -10,6 +10,7 @@ Time tracer is a time recording application which is inherently simple to captur
 - Backend - <a href='https://supabase.com/'>Supabase</a> - a Postgres Database, Authentication, instant APIs, Realtime subscriptions and Storage.
 <br>
 <br>
+<br>
 
 ### Authentication
 
