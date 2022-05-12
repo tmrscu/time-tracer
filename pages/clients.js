@@ -15,6 +15,7 @@ import {
   Th,
   useDisclosure,
   Text,
+  Checkbox,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import { AddIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
@@ -32,6 +33,8 @@ const Clients = () => {
   const [sortOrder, setSortOrder] = useState(true);
   const [editClientData, setEditClientData] = useState({});
   const [deleteClientId, setDeleteClientId] = useState();
+  const [showActiveClients, setShowActiveClients] = useState(true);
+  const [showInactiveClients, setShowInactiveClients] = useState(false);
 
   const getClientData = async () => {
     let { data: clients, error } = await supabaseClient
@@ -150,9 +153,26 @@ const Clients = () => {
           </Button>
         </Flex>
 
-        {sortedClients.filter((client) => client.status == true).length > 0 ? (
+        <Heading as="h4" size="sm" mt={10} mb={4}>
+          Filter Client List
+        </Heading>
+        <Checkbox
+          isChecked={showActiveClients}
+          mr={5}
+          onChange={(e) => setShowActiveClients(e.target.checked)}
+        >
+          Active Clients
+        </Checkbox>
+        <Checkbox
+          isChecked={showInactiveClients}
+          onChange={(e) => setShowInactiveClients(e.target.checked)}
+        >
+          Inactive Clients
+        </Checkbox>
+
+        {sortedClients.filter((client) => client.status == true).length > 0 &&
+        showActiveClients ? (
           <>
-            {console.log(sortedClients)}
             <Heading as="h4" size="md" mt={10} mb={4}>
               Active Clients
             </Heading>
@@ -167,6 +187,7 @@ const Clients = () => {
                         setSortedField("company");
                         sortData("company");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Company Name
                       <TriangleUpIcon
@@ -200,6 +221,7 @@ const Clients = () => {
                         setSortedField("email");
                         sortData("email");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Email
                       <TriangleUpIcon
@@ -233,6 +255,7 @@ const Clients = () => {
                         setSortedField("first_name");
                         sortData("first_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       First Name
                       <TriangleUpIcon
@@ -266,6 +289,7 @@ const Clients = () => {
                         setSortedField("last_name");
                         sortData("last_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Last Name
                       <TriangleUpIcon
@@ -299,6 +323,7 @@ const Clients = () => {
                         setSortedField("contact_number");
                         sortData("contact_number");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Contact Number
                       <TriangleUpIcon
@@ -346,15 +371,18 @@ const Clients = () => {
               </Table>
             </TableContainer>
           </>
-        ) : (
+        ) : showActiveClients ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Active Clients
             </Heading>
             <Text>There are no active clients.</Text>
           </>
+        ) : (
+          <></>
         )}
-        {sortedClients.filter((client) => client.status == false).length > 0 ? (
+        {sortedClients.filter((client) => client.status == false).length > 0 &&
+        showInactiveClients ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Inactive Clients
@@ -370,6 +398,7 @@ const Clients = () => {
                         setSortedField("company");
                         sortData("company");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Company Name
                       <TriangleUpIcon
@@ -403,6 +432,7 @@ const Clients = () => {
                         setSortedField("email");
                         sortData("email");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Email
                       <TriangleUpIcon
@@ -436,6 +466,7 @@ const Clients = () => {
                         setSortedField("first_name");
                         sortData("first_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       First Name
                       <TriangleUpIcon
@@ -469,6 +500,7 @@ const Clients = () => {
                         setSortedField("last_name");
                         sortData("last_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Last Name
                       <TriangleUpIcon
@@ -502,6 +534,7 @@ const Clients = () => {
                         setSortedField("contact_number");
                         sortData("contact_number");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Contact Number
                       <TriangleUpIcon
@@ -549,13 +582,15 @@ const Clients = () => {
               </Table>
             </TableContainer>
           </>
-        ) : (
+        ) : showInactiveClients ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Inactive Clients
             </Heading>
             <Text>There are no inactive clients.</Text>
           </>
+        ) : (
+          <></>
         )}
       </Container>
 
