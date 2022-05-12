@@ -105,7 +105,7 @@ const NewClientModal = ({
         getClientData().then((results) => {
           setClients(results); // Refresh client data
           setSortedClients(results);
-          setSortedField(null);
+          setSortedField("company");
           setCompanyNameInput("");
           setEmailInput("");
           setFirstNameInput("");

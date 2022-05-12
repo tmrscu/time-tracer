@@ -70,7 +70,7 @@ const NewTaskType = ({
         getTaskTypeData().then((results) => {
           setTaskTypes(results); // Refresh project data
           setSortedTaskTypes(results);
-          setSortedField(null);
+          setSortedField("task_name");
           setTaskTypeInput("");
           onClose(); // Closes Modal
         });

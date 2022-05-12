@@ -120,7 +120,7 @@ const UpdateClientModal = ({
         getClientData().then((results) => {
           setClients(results); // Refresh client data
           setSortedClients(results);
-          setSortedField(null);
+          setSortedField("company");
           onClose(); // Closes Modal
         });
       }

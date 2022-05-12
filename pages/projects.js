@@ -16,6 +16,7 @@ import {
   Th,
   useDisclosure,
   Text,
+  Checkbox,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import { AddIcon, TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
@@ -35,12 +36,15 @@ const Projects = () => {
   const [sortedProjects, setSortedProjects] = useState([]);
   const [sortField, setSortedField] = useState(null);
   const [sortOrder, setSortOrder] = useState(true);
+  const [showActiveProjects, setShowActiveProjects] = useState(true);
+  const [showInactiveProjects, setShowInactiveProjects] = useState(false);
 
   const getProjectData = async () => {
     let { data: projects, error } = await supabaseClient
       .from("projects")
       .select(`*, clients!clients_client_id_fkey (*)`)
       .order("client_id", { ascending: true });
+
     return projects;
   };
 
@@ -198,6 +202,24 @@ const Projects = () => {
             New
           </Button>
         </Flex>
+
+        <Heading as="h4" size="sm" mt={10} mb={4}>
+          Filter Project List
+        </Heading>
+        <Checkbox
+          isChecked={showActiveProjects}
+          mr={5}
+          onChange={(e) => setShowActiveProjects(e.target.checked)}
+        >
+          Active Projects
+        </Checkbox>
+        <Checkbox
+          isChecked={showInactiveProjects}
+          onChange={(e) => setShowInactiveProjects(e.target.checked)}
+        >
+          Inactive Projects
+        </Checkbox>
+
         <FormLabel mt={6}>Select a Company / Client to filter by:</FormLabel>
         <Select
           name="client"
@@ -227,7 +249,7 @@ const Projects = () => {
           )}
         </Select>
         {sortedProjects.filter((sortedProject) => sortedProject.status == true)
-          .length > 0 ? (
+          .length > 0 && showActiveProjects ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Active Projects
@@ -243,6 +265,7 @@ const Projects = () => {
                         setSortedField("project_name");
                         sortData("project_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Project Name
                       <TriangleUpIcon
@@ -276,6 +299,7 @@ const Projects = () => {
                         setSortedField("hourly_rate");
                         sortData("hourly_rate");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Hourly Rate
                       <TriangleUpIcon
@@ -309,6 +333,7 @@ const Projects = () => {
                         setSortedField("company");
                         sortData("company");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Company / Client
                       <TriangleUpIcon
@@ -356,16 +381,18 @@ const Projects = () => {
               </Table>
             </TableContainer>
           </>
-        ) : (
+        ) : showActiveProjects ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Active Projects
             </Heading>
             <Text>There are no active projects.</Text>
           </>
+        ) : (
+          <></>
         )}
         {sortedProjects.filter((sortedProject) => sortedProject.status == false)
-          .length > 0 ? (
+          .length > 0 && showInactiveProjects ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
               Inactive Projects
@@ -381,6 +408,7 @@ const Projects = () => {
                         setSortedField("project_name");
                         sortData("project_name");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Project Name
                       <TriangleUpIcon
@@ -414,6 +442,7 @@ const Projects = () => {
                         setSortedField("hourly_rate");
                         sortData("hourly_rate");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Hourly Rate
                       <TriangleUpIcon
@@ -447,6 +476,7 @@ const Projects = () => {
                         setSortedField("company");
                         sortData("company");
                       }}
+                      style={{ cursor: "pointer" }}
                     >
                       Company / Client
                       <TriangleUpIcon
@@ -494,13 +524,15 @@ const Projects = () => {
               </Table>
             </TableContainer>
           </>
-        ) : (
+        ) : showInactiveProjects ? (
           <>
             <Heading as="h4" size="md" mt={10} mb={4}>
-              Active Projects
+              Inactive Projects
             </Heading>
             <Text>There are no inactive projects.</Text>
           </>
+        ) : (
+          <></>
         )}
       </Container>
 

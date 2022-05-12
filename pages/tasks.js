@@ -128,6 +128,7 @@ const Tasks = () => {
                       setSortedField("task_name");
                       sortData("task_name");
                     }}
+                    style={{ cursor: "pointer" }}
                   >
                     Task Type
                     <TriangleUpIcon
