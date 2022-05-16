@@ -19,6 +19,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
+// The new client modal component
 const NewClientModal = ({
   isOpen,
   onClose,
@@ -28,6 +29,7 @@ const NewClientModal = ({
   setSortedField,
   getClientData,
 }) => {
+  // Input States
   const [companyNameInput, setCompanyNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [firstNameInput, setFirstNameInput] = useState("");
@@ -35,6 +37,7 @@ const NewClientModal = ({
   const [contactNumberInput, setContactNumberInput] = useState("");
   const [statusInput, setStatusInput] = useState(true);
 
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -102,6 +105,7 @@ const NewClientModal = ({
           // RESET FORM DATA?
         }, 3000);
       } else {
+        // get the client data to reflect changes
         getClientData().then((results) => {
           setClients(results); // Refresh client data
           setSortedClients(results);

@@ -25,6 +25,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 
+// The new project modal component
 const NewProjectModal = ({
   isOpen,
   onClose,
@@ -36,11 +37,13 @@ const NewProjectModal = ({
   getProjectData,
   activeClientData,
 }) => {
+  // Input States
   const [projectNameInput, setProjectNameInput] = useState("");
   const [hourlyRateInput, setHourlyRateInput] = useState("");
   const [clientIdInput, setClientIdInput] = useState("");
   const [statusInput, setStatusInput] = useState(true);
 
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -49,13 +52,13 @@ const NewProjectModal = ({
     setClientIdInput(activeClientData[0].client_id);
   }, [activeClientData]);
 
+  // Check the client id is unique
   const isUnique = async (project) => {
     const { data, error } = await supabaseClient
       .from("projects")
       .select("project_name")
       .ilike("project_name", project)
       .eq("client_id", clientIdInput);
-
     return data;
   };
 
@@ -91,6 +94,7 @@ const NewProjectModal = ({
           setError(null);
         }, 3000);
       } else {
+        // get the new project data to reflect changes
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
           setSortedProjects(filterByClient(results, filterValue)); // Refresh sorted list

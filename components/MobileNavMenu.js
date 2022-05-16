@@ -1,12 +1,7 @@
 import Link from "next/link";
-import {
-  Box,
-  Stack,
-  Collapse,
-  Text,
-  Divider,
-} from "@chakra-ui/react";
+import { Box, Stack, Collapse, Text, Divider } from "@chakra-ui/react";
 
+// The mobile navbar component
 const MobileNavMenu = ({ isOpen, user, logout }) => {
   return (
     <Collapse

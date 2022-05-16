@@ -18,7 +18,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const UpdateClientModal = ({
+// The Edit task type modal component
+const EditTaskTypeModal = ({
   isOpen,
   onClose,
   editTaskTypeData,
@@ -27,19 +28,23 @@ const UpdateClientModal = ({
   setSortedTaskTypes,
   setSortedField,
 }) => {
+  // Input State
   const [taskTypeInput, setTaskTypeInput] = useState("");
+
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Check the task type name is unique
   const isUnique = async (task_type) => {
     const { data, error } = await supabaseClient
       .from("task_types")
       .select("task_name")
       .ilike("task_name", task_type);
-
     return data;
   };
 
+  // Update task type
   const updateTaskType = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -70,6 +75,7 @@ const UpdateClientModal = ({
           setError(null);
         }, 3000);
       } else {
+        // Get the task types and set state with update data to reflect changes
         getTaskTypeData().then((results) => {
           setTaskTypes(results); // Refresh project data
           setSortedTaskTypes(results);
@@ -129,4 +135,4 @@ const UpdateClientModal = ({
   );
 };
 
-export default UpdateClientModal;
+export default EditTaskTypeModal;

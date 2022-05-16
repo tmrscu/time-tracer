@@ -19,7 +19,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const UpdateClientModal = ({
+// The Edit client modal component
+const EditClientModal = ({
   isOpen,
   onClose,
   user,
@@ -29,6 +30,7 @@ const UpdateClientModal = ({
   getClientData,
   editClientData,
 }) => {
+  // Input States
   const [companyNameInput, setCompanyNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [firstNameInput, setFirstNameInput] = useState("");
@@ -36,6 +38,7 @@ const UpdateClientModal = ({
   const [contactNumberInput, setContactNumberInput] = useState("");
   const [statusInput, setStatusInput] = useState("");
 
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -218,4 +221,4 @@ const UpdateClientModal = ({
   );
 };
 
-export default UpdateClientModal;
+export default EditClientModal;

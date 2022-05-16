@@ -36,6 +36,7 @@ const Clients = () => {
   const [showActiveClients, setShowActiveClients] = useState(true);
   const [showInactiveClients, setShowInactiveClients] = useState(false);
 
+  // Get the clients data
   const getClientData = async () => {
     let { data: clients, error } = await supabaseClient
       .from("clients")
@@ -89,6 +90,7 @@ const Clients = () => {
     }
   };
 
+  // On page load, get the clients data and sort
   useEffect(() => {
     getClientData().then((results) => {
       setClients(results);
@@ -96,6 +98,7 @@ const Clients = () => {
     });
   }, []);
 
+  // Modal operations
   const {
     isOpen: isNewOpen,
     onOpen: onNewOpen,
@@ -114,6 +117,8 @@ const Clients = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+
+  // Delete client function
   const deleteClient = async () => {
     const id = deleteClientId;
     const { data, error } = await supabaseClient
@@ -148,6 +153,7 @@ const Clients = () => {
             color="white"
             leftIcon={<AddIcon />}
             onClick={onNewOpen}
+            _hover={{ opacity: 0.8 }}
           >
             New
           </Button>

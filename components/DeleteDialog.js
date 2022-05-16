@@ -5,31 +5,26 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  Button
-} from '@chakra-ui/react'
+  Button,
+} from "@chakra-ui/react";
 
-const DeleteDialog = ({ isOpen, onOpen, onClose, title, type, deleteFunction}) => {
+// The delete alert dialog used for all delete functions
+const DeleteDialog = ({ isOpen, onClose, title, type, deleteFunction }) => {
   return (
-      <>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+    <>
+      <AlertDialog isOpen={isOpen} onClose={onClose}>
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
               {title}
             </AlertDialogHeader>
-
             <AlertDialogBody>
               Are you sure? You can&rsquo;t undo this action afterwards.
             </AlertDialogBody>
-
             <AlertDialogFooter>
-              <Button onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme='red' onClick={deleteFunction} ml={3}>
+              <Button onClick={onClose}>Cancel</Button>
+              {/* Fire the delete function on click */}
+              <Button colorScheme="red" onClick={deleteFunction} ml={3}>
                 {`Delete ${type}`}
               </Button>
             </AlertDialogFooter>
@@ -37,7 +32,7 @@ const DeleteDialog = ({ isOpen, onOpen, onClose, title, type, deleteFunction}) =
         </AlertDialogOverlay>
       </AlertDialog>
     </>
-  )
-}
+  );
+};
 
-export default DeleteDialog
+export default DeleteDialog;

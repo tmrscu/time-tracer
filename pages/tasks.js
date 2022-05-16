@@ -110,6 +110,7 @@ const Tasks = () => {
             color="white"
             leftIcon={<AddIcon />}
             onClick={onNewOpen}
+            _hover={{ opacity: 0.8 }}
           >
             New
           </Button>

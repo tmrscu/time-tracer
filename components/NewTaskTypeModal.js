@@ -15,9 +15,10 @@ import {
   chakra,
   Alert,
   AlertIcon,
-  Text
+  Text,
 } from "@chakra-ui/react";
 
+// The new task type modal component
 const NewTaskType = ({
   isOpen,
   onClose,
@@ -27,19 +28,23 @@ const NewTaskType = ({
   setSortedTaskTypes,
   setSortedField,
 }) => {
+  // Input States
   const [taskTypeInput, setTaskTypeInput] = useState("");
+
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Check the task type name is unique
   const isUnique = async (task_type) => {
     const { data, error } = await supabaseClient
       .from("task_types")
       .select("task_name")
       .ilike("task_name", task_type);
-
     return data;
   };
 
+  // Create a new task type
   const addNewTaskType = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -67,6 +72,7 @@ const NewTaskType = ({
           setError(null);
         }, 3000);
       } else {
+        // Get the new task type data to reflect changes
         getTaskTypeData().then((results) => {
           setTaskTypes(results); // Refresh project data
           setSortedTaskTypes(results);
@@ -94,7 +100,7 @@ const NewTaskType = ({
           <ModalHeader>Add New Task Type</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-          {error && (
+            {error && (
               <Alert status="error" mb="6">
                 <AlertIcon />
                 <Text textAlign="center">{error}</Text>

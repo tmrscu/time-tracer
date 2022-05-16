@@ -1,6 +1,7 @@
 import { Td, Tr } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
+// The project item component
 const ProjectItem = ({
   project_id,
   project_name,
@@ -13,6 +14,7 @@ const ProjectItem = ({
   setEditProjectData,
   setDeleteProjectId,
 }) => {
+  // The edit function to edit a project
   const handleEdit = () => {
     setEditProjectData({
       project_id,
@@ -20,11 +22,12 @@ const ProjectItem = ({
       hourly_rate,
       status,
       client_id,
-      clients
+      clients,
     });
     onUpdateOpen();
   };
 
+  // The delete function to delete a project
   const handleDelete = () => {
     setDeleteProjectId(project_id);
     onDeleteOpen();

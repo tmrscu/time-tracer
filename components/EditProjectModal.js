@@ -25,7 +25,8 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-const UpdateProjectModal = ({
+// Edit Project Modal component
+const EditProjectModal = ({
   isOpen,
   onClose,
   setProjects,
@@ -37,11 +38,13 @@ const UpdateProjectModal = ({
   editProjectData,
   activeClientData,
 }) => {
+  // Input State
   const [projectNameInput, setProjectNameInput] = useState("");
   const [hourlyRateInput, setHourlyRateInput] = useState(0.0);
   const [clientIdInput, setClientIdInput] = useState("");
   const [statusInput, setStatusInput] = useState(true);
 
+  // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -54,6 +57,7 @@ const UpdateProjectModal = ({
     setStatusInput(editProjectData.status);
   }, [editProjectData]);
 
+  // Check the client id is unique
   const isUnique = async (project) => {
     const { data, error } = await supabaseClient
       .from("projects")
@@ -61,7 +65,6 @@ const UpdateProjectModal = ({
       .ilike("project_name", project)
       .not("project_id", "eq", editProjectData.project_id)
       .eq("client_id", clientIdInput);
-
     return data;
   };
 
@@ -223,4 +226,4 @@ const UpdateProjectModal = ({
   );
 };
 
-export default UpdateProjectModal;
+export default EditProjectModal;

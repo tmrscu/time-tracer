@@ -39,6 +39,7 @@ const Projects = () => {
   const [showActiveProjects, setShowActiveProjects] = useState(true);
   const [showInactiveProjects, setShowInactiveProjects] = useState(false);
 
+  // Get the project data
   const getProjectData = async () => {
     let { data: projects, error } = await supabaseClient
       .from("projects")
@@ -48,6 +49,7 @@ const Projects = () => {
     return projects;
   };
 
+  // Get the client data
   const getClientData = async (id) => {
     let { data: clients, error } = await supabaseClient
       .from("clients")
@@ -113,6 +115,7 @@ const Projects = () => {
     }
   };
 
+  // On page load, get the project data and sort it
   useEffect(() => {
     getProjectData().then((results) => {
       setProjects(results);
@@ -146,6 +149,7 @@ const Projects = () => {
     return filteredClients;
   };
 
+  // Modal operations
   const {
     isOpen: isNewOpen,
     onOpen: onNewOpen,
@@ -164,6 +168,7 @@ const Projects = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+  // Delete project
   const deleteProject = async () => {
     const id = deleteProjectId;
     const { data, error } = await supabaseClient
@@ -198,6 +203,7 @@ const Projects = () => {
             color="white"
             leftIcon={<AddIcon />}
             onClick={onNewOpen}
+            _hover={{ opacity: 0.8 }}
           >
             New
           </Button>

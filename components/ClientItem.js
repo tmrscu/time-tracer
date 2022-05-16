@@ -1,6 +1,7 @@
 import { Td, Tr } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
+// Client list item component for client table
 const ClientItem = ({
   client_id,
   company,
@@ -27,6 +28,7 @@ const ClientItem = ({
     onUpdateOpen();
   };
 
+  // The delete function to delete a client
   const handleDelete = () => {
     setDeleteClientId(client_id);
     onDeleteOpen();

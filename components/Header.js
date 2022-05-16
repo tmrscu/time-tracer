@@ -1,8 +1,6 @@
 import Link from "next/link";
 import {
   Box,
-  Stack,
-  Collapse,
   Flex,
   Text,
   Button,
@@ -21,6 +19,7 @@ import { useAuth } from "../context/Auth";
 import NavMenu from "./NavMenu";
 import MobileNavMenu from "./MobileNavMenu";
 
+// The header component
 const Header = (props) => {
   // Handle state and function to toggle mobile menu
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -68,6 +67,7 @@ const Header = (props) => {
       >
         <HamburgerIcon boxSize={6} />
       </Box>
+      {/* The mobile viewport navbar */}
       {!isDesktop && (
         <MobileNavMenu
           isOpen={isOpen}
@@ -76,7 +76,7 @@ const Header = (props) => {
           logout={logout}
         />
       )}
-
+      {/* The desktop viewport navbar */}
       <NavMenu />
       <Box
         display={{ base: isOpen ? "block" : "none", md: "block" }}
