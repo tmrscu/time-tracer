@@ -32,6 +32,7 @@ const EditProjectModal = ({
   setProjects,
   setSortedProjects,
   setSortedField,
+  setSortOrder,
   filterByClient,
   filterValue,
   getProjectData,
@@ -106,7 +107,8 @@ const EditProjectModal = ({
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
           setSortedProjects(filterByClient(results, filterValue)); // Refresh sorted list
-          setSortedField(null);
+          setSortedField("company");
+          setSortOrder(true);
           onClose(); // Closes Modal
         });
       }

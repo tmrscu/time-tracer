@@ -34,7 +34,7 @@ const Projects = () => {
   const [activeClientData, setActiveClientData] = useState([{}]);
   const [filterValue, setFilterValue] = useState("");
   const [sortedProjects, setSortedProjects] = useState([]);
-  const [sortField, setSortedField] = useState(null);
+  const [sortField, setSortedField] = useState("company");
   const [sortOrder, setSortOrder] = useState(true);
   const [showActiveProjects, setShowActiveProjects] = useState(true);
   const [showInactiveProjects, setShowInactiveProjects] = useState(false);
@@ -46,7 +46,15 @@ const Projects = () => {
       .select(`*, clients!clients_client_id_fkey (*)`)
       .order("client_id", { ascending: true });
 
-    return projects;
+    // Sort results in alphanetical order, by company
+    let sortedResults = projects.sort((x, y) => {
+      let a = x.clients["company"].toUpperCase(),
+        b = y.clients["company"].toUpperCase();
+
+      return a == b ? 0 : a > b ? 1 : -1;
+    });
+
+    return sortedResults;
   };
 
   // Get the client data
@@ -548,6 +556,7 @@ const Projects = () => {
         setProjects={setProjects}
         setSortedProjects={setSortedProjects}
         setSortedField={setSortedField}
+        setSortOrder={setSortOrder}
         filterByClient={filterByClient}
         filterValue={filterValue}
         getProjectData={getProjectData}
@@ -559,6 +568,7 @@ const Projects = () => {
         setProjects={setProjects}
         setSortedProjects={setSortedProjects}
         setSortedField={setSortedField}
+        setSortOrder={setSortOrder}
         filterByClient={filterByClient}
         filterValue={filterValue}
         getProjectData={getProjectData}

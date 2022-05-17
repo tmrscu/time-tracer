@@ -165,6 +165,9 @@ const EditClientModal = ({
             <FormControl mt={4}>
               <FormLabel>Email</FormLabel>
               <Input
+                type="text"
+                pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                title="Eg. email@address.com"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
               />
@@ -191,6 +194,9 @@ const EditClientModal = ({
             <FormControl mt={4}>
               <FormLabel>Contact Number</FormLabel>
               <Input
+                type={"text"}
+                pattern="^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"
+                title="Contact number must 10-12 digits long, with no spaces or in the following format: (###) (###) (#####)"
                 value={contactNumberInput}
                 onChange={(e) => setContactNumberInput(e.target.value)}
               />

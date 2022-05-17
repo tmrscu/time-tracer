@@ -32,6 +32,7 @@ const NewProjectModal = ({
   setProjects,
   setSortedProjects,
   setSortedField,
+  setSortOrder,
   filterByClient,
   filterValue,
   getProjectData,
@@ -98,7 +99,8 @@ const NewProjectModal = ({
         getProjectData().then((results) => {
           setProjects(results); // Refresh project data
           setSortedProjects(filterByClient(results, filterValue)); // Refresh sorted list
-          setSortedField(null);
+          setSortedField("company");
+          setSortOrder(true);
           setProjectNameInput("");
           setHourlyRateInput("");
           setStatusInput(true);
