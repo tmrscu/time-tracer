@@ -21,6 +21,7 @@ import NewTaskTypeModal from "../components/NewTaskTypeModal";
 import TaskTypeItem from "../components/TaskTypeItem";
 import EditTaskTypeModal from "../components/EditTaskTypeModal";
 import DeleteDialog from "../components/DeleteDialog";
+import DeleteTypeErrorDialog from "../components/DeleteTypeErrorDialog";
 
 // The Task Types Page
 const Tasks = () => {
@@ -29,6 +30,7 @@ const Tasks = () => {
   const [sortField, setSortedField] = useState("task_name");
   const [sortOrder, setSortOrder] = useState(true);
   const [editTaskTypeData, setTaskTypeData] = useState({});
+  const [deleteTaskTypeId, setDeleteTaskTypeId] = useState();
   const { user } = useAuth();
 
   const getTaskTypeData = async () => {
@@ -97,6 +99,33 @@ const Tasks = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isErrorOpen,
+    onOpen: onErrorOpen,
+    onClose: onErrorClose,
+  } = useDisclosure();
+
+  // Delete task type
+  const deleteTaskType = async () => {
+    const id = deleteTaskTypeId;
+    const { data, error } = await supabaseClient
+      .from("task_types")
+      .delete()
+      .eq("task_type_id", id);
+
+    if (!error) {
+      // Refresh the task_type data
+      getTaskTypeData().then((results) => {
+        setTaskTypes(results);
+        setSortedTaskTypes(results);
+      });
+    }
+    setDeleteTaskTypeId(null);
+
+    // Close the Delete Dialog
+    onDeleteClose();
+  };
+
   return (
     <Box bg="#f6f8fc" h="100vh">
       <Header />
@@ -157,6 +186,7 @@ const Tasks = () => {
                       }}
                     />
                   </Th>
+                  <Th color={"white " + "!important"} textAlign={"center"}>Delete</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -166,7 +196,9 @@ const Tasks = () => {
                     {...task}
                     onUpdateOpen={onUpdateOpen}
                     onDeleteOpen={onDeleteOpen}
+                    onErrorOpen={onErrorOpen}
                     setTaskTypeData={setTaskTypeData}
+                    setDeleteTaskTypeId={setDeleteTaskTypeId}
                   />
                 ))}
               </Tbody>
@@ -192,6 +224,18 @@ const Tasks = () => {
         setTaskTypes={setTaskTypes}
         setSortedTaskTypes={setSortedTaskTypes}
         setSortedField={setSortedField}
+      />
+      <DeleteDialog
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
+        title={"Delete Task Type"}
+        type={"Task Type"}
+        deleteFunction={deleteTaskType}
+      />
+      <DeleteTypeErrorDialog
+        isOpen={isErrorOpen}
+        onClose={onErrorClose}
+        title={"Delete Task Type Error"}
       />
     </Box>
   );

@@ -375,7 +375,7 @@ const Projects = () => {
                         }}
                       />
                     </Th>
-                    <Th color={"white " + "!important"}>Delete</Th>
+                    <Th color={"white " + "!important"} textAlign={"center"}>Delete</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -518,7 +518,7 @@ const Projects = () => {
                         }}
                       />
                     </Th>
-                    <Th color={"white " + "!important"}>Delete</Th>
+                    <Th color={"white " + "!important"} textAlign={"center"}>Delete</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
