@@ -1,70 +1,131 @@
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { supabaseClient } from '../utils/client'
-import styles from '../styles/Home.module.css'
-import { Box, Heading, Text, Image, Link } from '@chakra-ui/react'
-import Header from '../components/Header'
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { supabaseClient } from "../utils/client";
+import TimerContainer from "../components/TimerContainer";
+import { Box, Container } from "@chakra-ui/react";
+import Header from "../components/Header";
+import { useStopwatch } from "react-timer-hook";
+import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 
 export default function Home() {
-  const router = useRouter()
-  const user = supabaseClient.auth.user()
+  const [clientID, setClientID] = useState(null);
+  const [projectID, setProjectID] = useState(null);
+  const [taskTypeID, setTaskTypeID] = useState(null);
+  const [entryNote, setEntryNote] = useState("");
+  const [intervalID, setIntervalID] = useState(null);
+  const [currentTrackingID, setCurrentTrackingID] = useState(null);
 
+  const { start, reset, seconds, minutes, hours, isRunning } = useStopwatch({
+    autoStart: false,
+    precision: "seconds",
+  });
+
+  const [timer, setTimer] = useState({});
+  const router = useRouter();
+  const user = supabaseClient.auth.user();
   // useEffect runs, pushes to signin page if no user
   useEffect(() => {
     if (!user) {
-      router.push('/signin')
+      router.push("/signin");
     }
-  }, [user, router])
+  }, [user, router]);
 
   // Returns an empty div if theres no user
   // Prevents page flash
   if (!user) {
-    return <div></div>
+    return <div></div>;
   }
+
+  const startTimer = async () => {
+    setCurrentTrackingID(null);
+    // Insert a new project task and get the project task ID back
+    const project_task_id = await insertProjectTask();
+
+    // Send a request to the server to start the timer - get a response back with the task ID
+    const tracking_id = await insertTaskTracking(project_task_id, entryNote);
+    setCurrentTrackingID(tracking_id);
+    
+    // Set an interval to update the timer every minute
+    const interval = setInterval(() => {
+      updateTaskTracking(tracking_id);
+    }, 60000);
+
+    setIntervalID(interval);
+    // Start the timer
+    start();
+  };
+
+  const stopTimer = () => {
+    // Send a request to the server to stop the task and update the duration
+    updateTaskTracking(currentTrackingID);
+    setCurrentTrackingID(null);
+
+    // Clear the interval
+    clearInterval(intervalID);
+    setIntervalID(null);
+    // reset the input
+    setEntryNote("");
+    // stop the timer
+    reset(0, false);
+    // update the state. make a request to get the finished tasks
+  };
+
+  // 1. Make a request which generates project_task_id
+  const insertProjectTask = async () => {
+    const { data, error } = await supabaseClient.from("project_tasks").insert({
+      project_id: projectID,
+      task_type_id: taskTypeID,
+    });
+
+    return data[0].project_task_id;
+  };
+
+  // 2. Do an insert on task tracking where we need to generate current date, time and use that new project_task_id from request 1
+  const insertTaskTracking = async (project_task_id, entryNote) => {
+    const { data, error } = await supabaseClient.from("task_tracking").insert({
+      start_time: getCurrentTime(),
+      project_task_id: project_task_id,
+      date: getCurrentDate(),
+      entry_notes: entryNote,
+    });
+    console.log("data", data);
+    console.log("error", error);
+    // 3. Receive back from number 2 request, the new task_tracking.ID
+    return data[0].tracking_id;
+  };
+
+  // 4. Make insert requests every minute to update the end_time with the current time using the task_tracking.ID from request 3
+  const updateTaskTracking = async (tracking_id) => {
+    const { data, error } = await supabaseClient
+      .from("task_tracking")
+      .update({
+        end_time: getCurrentTime(),
+      })
+      .eq("tracking_id", tracking_id);
+    console.log("Updated data", data);
+    console.log("error", error);
+  };
 
   // The index page
   return (
-    <div className={styles.container}>
+    <Box bg="#f6f8fc" h="100vh">
+      {/* border='1px' borderColor={'black'}  */}
       <Header />
-      <Box
-        color={'black'}
-        display='flexbox'
-        height='min-content'
-        alignItems={'center'}
-        textAlign='center'
-        px={12}
-        py={5}
-        ml={'auto'}
-        mr={'auto'}
-        mt={45}>
-        <Heading
-          as='h1'
-          fontSize='4xl'
-          color={'black'}
-          mb={5}>
-          Homepage Currently Under Construction
-        </Heading>
-        <Text>
-          This page is currently being worked on by our developers. Please check
-          back later when the work is complete.
-        </Text>
-        <Image
-          src='/work-in-progress.png'
-          boxSize='200px'
-          mt={50}
-          mb={10}
-          ml={'auto'}
-          mr={'auto'}
-          alt='in progress'
+      <Container maxW="6xl" pt={5}>
+        <TimerContainer
+          seconds={seconds}
+          minutes={minutes}
+          hours={hours}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
+          isRunning={isRunning}
+          setClientID={setClientID}
+          setProjectID={setProjectID}
+          setTaskTypeID={setTaskTypeID}
+          entryNote={entryNote}
+          setEntryNote={setEntryNote}
         />
-        <Link
-          href='https://www.flaticon.com/free-icons/work-in-progress'
-          title='work in progress icons'
-          color={'brand.primary'}
-          isExternal>
-          Work in progress icons created by Freepik - Flaticon
-        </Link>
-      </Box>
-    </div>
-  )
+      </Container>
+    </Box>
+  );
 }
