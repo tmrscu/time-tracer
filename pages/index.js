@@ -4,6 +4,7 @@ import { supabaseClient } from "../utils/client";
 import TimerContainer from "../components/TimerContainer";
 import { Box, Container } from "@chakra-ui/react";
 import Header from "../components/Header";
+import TimerItems from '../components/TimerItems'
 import { useStopwatch } from "react-timer-hook";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 
@@ -14,6 +15,7 @@ export default function Home() {
   const [entryNote, setEntryNote] = useState("");
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
+  const [taskTracking, setTaskTracking] = useState(null);
 
   const { start, reset, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
@@ -29,6 +31,12 @@ export default function Home() {
       router.push("/signin");
     }
   }, [user, router]);
+
+  useEffect(() => {
+    getTaskTracking()
+  
+  }, [])
+  
 
   // Returns an empty div if theres no user
   // Prevents page flash
@@ -106,6 +114,16 @@ export default function Home() {
     console.log("error", error);
   };
 
+  // get all the task_tracking data
+  const getTaskTracking = async () => {
+    const { data, error } = await supabaseClient
+      .from("task_tracking")
+      .select("*")
+
+      setTaskTracking(data);
+  }
+
+
   // The index page
   return (
     <Box bg="#f6f8fc" h="100vh">
@@ -125,7 +143,9 @@ export default function Home() {
           entryNote={entryNote}
           setEntryNote={setEntryNote}
         />
+        <TimerItems items={taskTracking} />
       </Container>
+
     </Box>
   );
 }
