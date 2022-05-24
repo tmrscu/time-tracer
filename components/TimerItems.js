@@ -64,11 +64,11 @@ const TimerItem = ({ date, duration, items }) => {
           {/* Map over the items and render them */}
         </AccordionButton>
         <AccordionPanel pb={4}>
-          {items.map((item) => {
+          {items.map((item, index) => {
             return (
               <Flex
                 justify={"space-between"}
-                key={item.id}
+                key={index}
                 py={3}
                 borderBottom={"1px"}
                 px={4}
@@ -102,10 +102,10 @@ const renderTimerItems = (items) => {
     }, {});
 
     // Map over items, and render a TimerItem for each
-    return Object.keys(groupedItems).map((date) => {
+    return Object.keys(groupedItems).map((date, index) => {
       const items = groupedItems[date];
       const duration = calcLength(items);
-      return <TimerItem date={date} duration={duration} items={items} />;
+      return <TimerItem date={date} duration={duration} items={items} key={index} />;
     });
   }
 };
