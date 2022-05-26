@@ -4,7 +4,7 @@ import { supabaseClient } from "../utils/client";
 import TimerContainer from "../components/TimerContainer";
 import { Box, Container } from "@chakra-ui/react";
 import Header from "../components/Header";
-import TimerItems from '../components/TimerItems'
+import TimerItems from "../components/TimerItems";
 import { useStopwatch } from "react-timer-hook";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 
@@ -33,10 +33,8 @@ export default function Home() {
   }, [user, router]);
 
   useEffect(() => {
-    getTaskTracking()
-  
-  }, [])
-  
+    getTaskTracking();
+  }, []);
 
   // Returns an empty div if theres no user
   // Prevents page flash
@@ -52,7 +50,7 @@ export default function Home() {
     // Send a request to the server to start the timer - get a response back with the task ID
     const tracking_id = await insertTaskTracking(project_task_id, entryNote);
     setCurrentTrackingID(tracking_id);
-    
+
     // Set an interval to update the timer every minute
     const interval = setInterval(() => {
       updateTaskTracking(tracking_id);
@@ -118,11 +116,11 @@ export default function Home() {
   const getTaskTracking = async () => {
     const { data, error } = await supabaseClient
       .from("task_tracking")
-      .select("*")
+      .select(`*, project_tasks (*, task_types (*))`)
+      .order("start_time", { ascending: false });
 
-      setTaskTracking(data);
-  }
-
+    setTaskTracking(data);
+  };
 
   // The index page
   return (
@@ -137,15 +135,25 @@ export default function Home() {
           startTimer={startTimer}
           stopTimer={stopTimer}
           isRunning={isRunning}
+          clientID={clientID}
+          projectID={projectID}
+          taskTypeID={taskTypeID}
           setClientID={setClientID}
           setProjectID={setProjectID}
           setTaskTypeID={setTaskTypeID}
           entryNote={entryNote}
           setEntryNote={setEntryNote}
         />
-        <TimerItems items={taskTracking} />
+        <TimerItems
+          items={taskTracking}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
+          isRunning={isRunning}
+          seconds={seconds}
+          minutes={minutes}
+          hours={hours}
+        />
       </Container>
-
     </Box>
   );
 }
