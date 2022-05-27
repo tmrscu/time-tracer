@@ -32,7 +32,13 @@ const calcLength = (items) => {
   // return the hours, minutes, and seconds of all added up in a string
   const sumTime = convert(totalSeconds);
 
-  return formatTime(sumTime.hours) + ":" + formatTime(sumTime.minutes) + ":" + formatTime(sumTime.seconds);
+  return (
+    formatTime(sumTime.hours) +
+    ":" +
+    formatTime(sumTime.minutes) +
+    ":" +
+    formatTime(sumTime.seconds)
+  );
 };
 
 const TimerItem = ({ date, duration, items }) => {
@@ -67,7 +73,7 @@ const TimerItem = ({ date, duration, items }) => {
         </AccordionButton>
         <AccordionPanel pb={4}>
           {items.map((item, index) => {
-            return <TimerRow item={item} index={index} />;
+            return <TimerRow item={item} index={index} key={index} />;
           })}
         </AccordionPanel>
       </AccordionItem>
@@ -92,7 +98,7 @@ const renderTimerItems = (props) => {
     }, {});
 
     // Sort the array with most recent date at the top
-    props.items.sort(function(a, b){
+    props.items.sort(function (a, b) {
       // Turn your strings into dates, and then subtract them
       // to get a value that is either negative, positive, or zero.
       return new Date(b.date) - new Date(a.date);
