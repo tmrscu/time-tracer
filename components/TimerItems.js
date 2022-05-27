@@ -9,6 +9,8 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import TimerRow from "./TimerRow";
+import { formatTime } from "./TimerContainer";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -30,7 +32,13 @@ const calcLength = (items) => {
   // return the hours, minutes, and seconds of all added up in a string
   const sumTime = convert(totalSeconds);
 
-  return sumTime.hours + ":" + sumTime.minutes + ":" + sumTime.seconds;
+  return (
+    formatTime(sumTime.hours) +
+    ":" +
+    formatTime(sumTime.minutes) +
+    ":" +
+    formatTime(sumTime.seconds)
+  );
 };
 
 const TimerItem = ({ date, duration, items }) => {
@@ -49,7 +57,7 @@ const TimerItem = ({ date, duration, items }) => {
           _hover={{ opacity: 0.85 }}
         >
           <Text>{date}</Text>
-          <Flex alignItems={'center'}>
+          <Flex alignItems={"center"}>
             <Text>{calcLength(items)}</Text>
             <Box
               color={"white"}
@@ -65,19 +73,7 @@ const TimerItem = ({ date, duration, items }) => {
         </AccordionButton>
         <AccordionPanel pb={4}>
           {items.map((item, index) => {
-            return (
-              <Flex
-                justify={"space-between"}
-                key={index}
-                py={3}
-                borderBottom={"1px"}
-                px={4}
-                borderColor={"#ccc"}
-              >
-                <Text>{item.entry_notes}</Text>
-                <Text>{item.duration}</Text>
-              </Flex>
-            );
+            return <TimerRow item={item} index={index} key={index} />;
           })}
         </AccordionPanel>
       </AccordionItem>
@@ -89,10 +85,10 @@ const TimerContainer = ({ date }) => {
   return <Box>{JSON.stringify(date)}</Box>;
 };
 
-const renderTimerItems = (items) => {
-  if (items?.length > 0) {
+const renderTimerItems = (props) => {
+  if (props.items?.length > 0) {
     // create an array of items grouped by date
-    const groupedItems = items.reduce((acc, item) => {
+    const groupedItems = props.items.reduce((acc, item) => {
       const date = item.date;
       if (!acc[date]) {
         acc[date] = [];
@@ -101,140 +97,31 @@ const renderTimerItems = (items) => {
       return acc;
     }, {});
 
+    // Sort the array with most recent date at the top
+    props.items.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
+
     // Map over items, and render a TimerItem for each
     return Object.keys(groupedItems).map((date, index) => {
       const items = groupedItems[date];
       const duration = calcLength(items);
-      return <TimerItem date={date} duration={duration} items={items} key={index} />;
+      return (
+        <TimerItem
+          date={date}
+          duration={props.duration}
+          items={items}
+          key={index}
+        />
+      );
     });
   }
 };
 
-const TimerItems = ({ date, duration, items }) => {
-  return <Box>{renderTimerItems(items)}</Box>;
+const TimerItems = (props) => {
+  return <Box>{renderTimerItems(props)}</Box>;
 };
 
 export default TimerItems;
-
-const data = [
-  {
-    tracking_id: 35,
-    start_time: "20:59:37",
-    end_time: null,
-    duration: null,
-    project_task_id: 42,
-    date: "2022-05-11",
-    entry_notes: "This is my test entry",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 36,
-    start_time: "20:18:08",
-    end_time: null,
-    duration: null,
-    project_task_id: 42,
-    date: "2022-05-12",
-    entry_notes: "This is my test entry",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 37,
-    start_time: "20:21:22",
-    end_time: null,
-    duration: null,
-    project_task_id: 42,
-    date: "2022-05-12",
-    entry_notes: "This is my test entry",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 38,
-    start_time: "20:36:39",
-    end_time: null,
-    duration: null,
-    project_task_id: 42,
-    date: "2022-05-12",
-    entry_notes: "This is my test entry",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 39,
-    start_time: "21:06:07",
-    end_time: "21:09:06",
-    duration: "00:02:59",
-    project_task_id: 52,
-    date: "2022-05-23",
-    entry_notes: "I am working on google alpha",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 40,
-    start_time: "21:17:18",
-    end_time: null,
-    duration: null,
-    project_task_id: 53,
-    date: "2022-05-23",
-    entry_notes: "I am working on a timer test",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 41,
-    start_time: "21:18:26",
-    end_time: "21:19:47",
-    duration: "00:01:21",
-    project_task_id: 54,
-    date: "2022-05-23",
-    entry_notes: "",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 42,
-    start_time: "21:23:26",
-    end_time: "21:24:26",
-    duration: "00:01:00",
-    project_task_id: 55,
-    date: "2022-05-23",
-    entry_notes: "",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 43,
-    start_time: "21:27:09",
-    end_time: "21:28:09",
-    duration: "00:01:00",
-    project_task_id: 56,
-    date: "2022-05-23",
-    entry_notes: "I am working on a test",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 44,
-    start_time: "21:29:40",
-    end_time: "21:29:55",
-    duration: "00:00:15",
-    project_task_id: 57,
-    date: "2022-05-23",
-    entry_notes: "",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 45,
-    start_time: "21:30:20",
-    end_time: "21:31:27",
-    duration: "00:01:07",
-    project_task_id: 58,
-    date: "2022-05-23",
-    entry_notes: "",
-    is_invoiced: false,
-  },
-  {
-    tracking_id: 46,
-    start_time: "21:33:13",
-    end_time: "21:33:18",
-    duration: "00:00:05",
-    project_task_id: 59,
-    date: "2022-05-23",
-    entry_notes: "Working on a test",
-    is_invoiced: false,
-  },
-];

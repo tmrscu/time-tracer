@@ -3,6 +3,10 @@ import TimerStartBtn from "./TimerStartBtn";
 import Timer from "./Timer";
 import TimerSelects from "./TimerSelects";
 
+export const formatTime = (time) => {
+  return String(time).padStart(2, "0");
+};
+
 const TimerContainer = ({
   seconds,
   minutes,
@@ -10,16 +14,15 @@ const TimerContainer = ({
   startTimer,
   stopTimer,
   isRunning,
+  clientID,
+  projectID,
+  taskTypeID,
   setClientID,
   setProjectID,
   setTaskTypeID,
   entryNote,
-  setEntryNote
+  setEntryNote,
 }) => {
-  const formatTime = (time) => {
-    return String(time).padStart(2, "0");
-  };
-
   return (
     <>
       <InputGroup>
@@ -31,7 +34,30 @@ const TimerContainer = ({
           value={entryNote}
           onChange={(e) => setEntryNote(e.target.value)}
         />
-        <InputRightElement right={16} top={3}>
+        <InputRightElement
+          right={16}
+          top={3}
+          pointerEvents={
+            clientID == null ||
+            projectID == null ||
+            taskTypeID == null ||
+            clientID == "" ||
+            projectID == "" ||
+            taskTypeID == ""
+              ? "none"
+              : ""
+          }
+          opacity={
+            clientID == null ||
+            projectID == null ||
+            taskTypeID == null ||
+            clientID == "" ||
+            projectID == "" ||
+            taskTypeID == ""
+              ? 0.3
+              : 1
+          }
+        >
           <Timer
             seconds={formatTime(seconds)}
             minutes={formatTime(minutes)}
