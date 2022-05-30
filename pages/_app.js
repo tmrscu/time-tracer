@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { supabaseClient } from '../utils/client'
 import queryString from 'query-string'
 import { AuthProvider } from '../context/Auth'
+import "../styles/globals.css"
 
 import { extendTheme } from '@chakra-ui/react'
 

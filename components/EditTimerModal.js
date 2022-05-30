@@ -40,7 +40,6 @@ const EditTimerModal = ({
   // Is loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  console.log(item)
   // // On page load
   useEffect(() => {
     // Store user profile data locally
