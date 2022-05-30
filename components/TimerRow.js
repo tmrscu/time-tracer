@@ -1,14 +1,4 @@
-import {
-  Box,
-  Text,
-  Flex,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  Tag,
-  Spacer,
-} from "@chakra-ui/react";
+import { Box, Text, Flex, useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import TimerStartBtn from "./TimerStartBtn";
@@ -16,6 +6,8 @@ import Timer from "./Timer";
 import { useStopwatch } from "react-timer-hook";
 import { supabaseClient } from "../utils/client";
 import { formatTime } from "./TimerContainer";
+import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
+import EditTimerModal from "./EditTimerModal";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -40,9 +32,10 @@ const calcLength = (items) => {
   return sumTime.hours + ":" + sumTime.minutes + ":" + sumTime.seconds;
 };
 
-const TimerRow = ({ item, index }) => {
+const TimerRow = ({ item, index, getTaskTracking }) => {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { start, pause, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
@@ -80,11 +73,16 @@ const TimerRow = ({ item, index }) => {
     const { data, error } = await supabaseClient
       .from("task_tracking")
       .update({
-        end_time: endTime,
+        end_time: getCurrentTime(),
       })
       .eq("tracking_id", tracking_id);
-    console.log("Updated data", data);
-    console.log("error", error);
+    if (!error) {
+      console.log("Updated data", data);
+      // get all data from the database
+      getTaskTracking();
+    } else {
+      console.log(error);
+    }
   };
 
   const stopTimer = () => {
@@ -105,12 +103,15 @@ const TimerRow = ({ item, index }) => {
       justify={"space-between"}
       alignItems={"center"}
       key={index}
-      py={3}
       borderBottom={"1px"}
-      px={4}
       borderColor={"#ccc"}
+      _last={{ borderBottom: "none" }}
+      py={2}
     >
-      <Text width={"calc(100% - 20% - 60px - 38px)"} overflow={"hidden"}>{item.entry_notes}</Text>
+      <EditIcon mr={3} onClick={onOpen} cursor={"pointer"} />
+      <Text width={"calc(100% - 20% - 60px - 38px)"} overflow={"hidden"}>
+        {item.entry_notes}
+      </Text>
       <Text width={"20%"}>{item.project_tasks.task_types.task_name}</Text>
       <Timer
         width={"60px"}
@@ -124,6 +125,7 @@ const TimerRow = ({ item, index }) => {
         stopTimer={stopTimer}
         isRunning={isRunning}
       />
+      <EditTimerModal isOpen={isOpen} onClose={onClose} item={item} />
     </Flex>
   );
 };

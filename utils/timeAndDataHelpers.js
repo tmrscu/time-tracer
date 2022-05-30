@@ -19,3 +19,13 @@ export const getCurrentDate = () => {
   const dateString = `${year}-${month}-${day}`;
   return dateString;
 }
+
+// convert date string to date format Sunday, January 1
+export const convertDateString = (date) => {
+  const dateObj = new Date(date);
+  const day = dateObj.toString().slice(0, 3);
+  const month = dateObj.toString().slice(4, 7);
+  const dayNum = dateObj.toString().slice(8, 10);
+  const dateString = `${day}, ${month} ${dayNum}`;
+  return dateString;
+}

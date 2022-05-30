@@ -65,6 +65,7 @@ export default function Home() {
     // Send a request to the server to stop the task and update the duration
     updateTaskTracking(currentTrackingID);
     setCurrentTrackingID(null);
+    getTaskTracking();
 
     // Clear the interval
     clearInterval(intervalID);
@@ -74,6 +75,8 @@ export default function Home() {
     // stop the timer
     reset(0, false);
     // update the state. make a request to get the finished tasks
+    
+    // NEED TO SET SELECTS BACK TO DEFAULT
   };
 
   // 1. Make a request which generates project_task_id
@@ -143,6 +146,7 @@ export default function Home() {
           setTaskTypeID={setTaskTypeID}
           entryNote={entryNote}
           setEntryNote={setEntryNote}
+          getTaskTracking={getTaskTracking}
         />
         <TimerItems
           items={taskTracking}
@@ -152,6 +156,8 @@ export default function Home() {
           seconds={seconds}
           minutes={minutes}
           hours={hours}
+          setTaskTracking={setTaskTracking}
+          getTaskTracking={getTaskTracking}
         />
       </Container>
     </Box>

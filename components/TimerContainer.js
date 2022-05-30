@@ -22,6 +22,7 @@ const TimerContainer = ({
   setTaskTypeID,
   entryNote,
   setEntryNote,
+  getTaskTracking,
 }) => {
   return (
     <>

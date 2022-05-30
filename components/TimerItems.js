@@ -11,6 +11,7 @@ import {
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import TimerRow from "./TimerRow";
 import { formatTime } from "./TimerContainer";
+import { convertDateString } from "../utils/timeAndDataHelpers";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -41,9 +42,21 @@ const calcLength = (items) => {
   );
 };
 
-const TimerItem = ({ date, duration, items }) => {
+const TimerItem = ({
+  date,
+  duration,
+  items,
+  setTaskTracking,
+  getTaskTracking,
+}) => {
   return (
-    <Accordion allowMultiple shadow={"lg"} m={6} borderRadius={2}>
+    <Accordion
+      allowMultiple
+      defaultIndex={[0]}
+      shadow={"lg"}
+      my={6}
+      borderRadius={2}
+    >
       <AccordionItem>
         <AccordionButton
           display={"flex"}
@@ -56,7 +69,7 @@ const TimerItem = ({ date, duration, items }) => {
           color="white"
           _hover={{ opacity: 0.85 }}
         >
-          <Text>{date}</Text>
+          <Text>{convertDateString(date)}</Text>
           <Flex alignItems={"center"}>
             <Text>{calcLength(items)}</Text>
             <Box
@@ -71,9 +84,17 @@ const TimerItem = ({ date, duration, items }) => {
           </Flex>
           {/* Map over the items and render them */}
         </AccordionButton>
-        <AccordionPanel pb={4}>
+        <AccordionPanel px={3} py={0}>
           {items.map((item, index) => {
-            return <TimerRow item={item} index={index} key={index} />;
+            return (
+              <TimerRow
+                item={item}
+                index={index}
+                key={index}
+                setTaskTracking={setTaskTracking}
+                getTaskTracking={getTaskTracking}
+              />
+            );
           })}
         </AccordionPanel>
       </AccordionItem>
@@ -114,6 +135,8 @@ const renderTimerItems = (props) => {
           duration={props.duration}
           items={items}
           key={index}
+          setTaskTracking={props.setTaskTracking}
+          getTaskTracking={props.getTaskTracking}
         />
       );
     });
