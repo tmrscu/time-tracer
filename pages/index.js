@@ -9,9 +9,9 @@ import { useStopwatch } from "react-timer-hook";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 
 export default function Home() {
-  const [clientID, setClientID] = useState(null);
-  const [projectID, setProjectID] = useState(null);
-  const [taskTypeID, setTaskTypeID] = useState(null);
+  const [clientID, setClientID] = useState("");
+  const [projectID, setProjectID] = useState("");
+  const [taskTypeID, setTaskTypeID] = useState("");
   const [entryNote, setEntryNote] = useState("");
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
@@ -65,15 +65,22 @@ export default function Home() {
     // Send a request to the server to stop the task and update the duration
     updateTaskTracking(currentTrackingID);
     setCurrentTrackingID(null);
-    getTaskTracking();
 
     // Clear the interval
     clearInterval(intervalID);
     setIntervalID(null);
     // reset the input
     setEntryNote("");
+    setClientID("");
+    setProjectID("");
+    setTaskTypeID("");
     // stop the timer
     reset(0, false);
+
+    setTimeout(() => {
+      getTaskTracking();
+    }, 500);
+    
     // update the state. make a request to get the finished tasks
     
     // NEED TO SET SELECTS BACK TO DEFAULT
@@ -93,12 +100,11 @@ export default function Home() {
   const insertTaskTracking = async (project_task_id, entryNote) => {
     const { data, error } = await supabaseClient.from("task_tracking").insert({
       start_time: getCurrentTime(),
+      end_time: getCurrentTime(),
       project_task_id: project_task_id,
       date: getCurrentDate(),
       entry_notes: entryNote,
     });
-    console.log("data", data);
-    console.log("error", error);
     // 3. Receive back from number 2 request, the new task_tracking.ID
     return data[0].tracking_id;
   };
@@ -111,8 +117,6 @@ export default function Home() {
         end_time: getCurrentTime(),
       })
       .eq("tracking_id", tracking_id);
-    console.log("Updated data", data);
-    console.log("error", error);
   };
 
   // get all the task_tracking data
@@ -127,7 +131,7 @@ export default function Home() {
 
   // The index page
   return (
-    <Box bg="#f6f8fc" h="100vh">
+    <Box bg="#f6f8fc">
       {/* border='1px' borderColor={'black'}  */}
       <Header />
       <Container maxW="6xl" pt={5}>

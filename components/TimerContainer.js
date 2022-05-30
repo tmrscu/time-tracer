@@ -39,9 +39,11 @@ const TimerContainer = ({
           right={16}
           top={3}
           pointerEvents={
+            entryNote == null||
             clientID == null ||
             projectID == null ||
             taskTypeID == null ||
+            entryNote == ""||
             clientID == "" ||
             projectID == "" ||
             taskTypeID == ""
@@ -49,9 +51,11 @@ const TimerContainer = ({
               : ""
           }
           opacity={
+            entryNote == null||
             clientID == null ||
             projectID == null ||
             taskTypeID == null ||
+            entryNote == ""||
             clientID == "" ||
             projectID == "" ||
             taskTypeID == ""
@@ -72,6 +76,9 @@ const TimerContainer = ({
         </InputRightElement>
       </InputGroup>
       <TimerSelects
+        clientID={clientID}
+        projectID={projectID}
+        taskTypeID={taskTypeID}
         setClientID={setClientID}
         setProjectID={setProjectID}
         setTaskTypeID={setTaskTypeID}

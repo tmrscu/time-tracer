@@ -44,7 +44,6 @@ const calcLength = (items) => {
 
 const TimerItem = ({
   date,
-  duration,
   items,
   setTaskTracking,
   getTaskTracking,
@@ -128,11 +127,9 @@ const renderTimerItems = (props) => {
     // Map over items, and render a TimerItem for each
     return Object.keys(groupedItems).map((date, index) => {
       const items = groupedItems[date];
-      const duration = calcLength(items);
       return (
         <TimerItem
           date={date}
-          duration={props.duration}
           items={items}
           key={index}
           setTaskTracking={props.setTaskTracking}

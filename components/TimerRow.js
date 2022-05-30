@@ -36,10 +36,20 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const dateCheck1 = new Date(item.date).toLocaleDateString();
+  const dateCheck2 = new Date(getCurrentDate()).toLocaleDateString();
+  const stopwatchOffset = new Date();
+  stopwatchOffset.setSeconds(
+    stopwatchOffset.getSeconds() +
+      parseInt(item.duration.substring(0, 2)) * 60 * 60 +
+      parseInt(item.duration.substring(3, 5)) * 60 +
+      parseInt(item.duration.substring(6, 8))
+  );
 
   const { start, pause, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
     precision: "seconds",
+    offsetTimestamp: stopwatchOffset,
   });
 
   const startTimer = async () => {
@@ -62,18 +72,34 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
     const startHours = parseInt(item.start_time.substring(0, 2));
     const startMinutes = parseInt(item.start_time.substring(3, 5));
     const startSeconds = parseInt(item.start_time.substring(6, 8));
-    const endHours =
-      startHours + parseInt(item.duration.substring(0, 2)) + hours;
-    const endMinutes =
-      startMinutes + parseInt(item.duration.substring(3, 5)) + minutes;
-    const endSeconds =
-      startSeconds + parseInt(item.duration.substring(6, 8)) + seconds;
+
+    const endTimeSeconds = new Date();
+    endTimeSeconds.setSeconds(hours * 60 * 60 + minutes * 60 + seconds);
+
+    const tempEndTime = convert(endTimeSeconds.getSeconds());
+    let endHours = startHours + tempEndTime.hours;
+    let endMinutes = startMinutes + tempEndTime.minutes;
+    let endSeconds = startSeconds + tempEndTime.seconds;
+
+    console.log(tempEndTime);
+
+    if (startSeconds + tempEndTime.seconds > 59) {
+      endSeconds = startSeconds + tempEndTime.seconds - 60;
+      endMinutes = startMinutes + tempEndTime.minutes + 1;
+    }
+    if (endMinutes + tempEndTime.minutes > 59) {
+      endMinutes = startMinutes + tempEndTime.minutes - 60;
+      endHours = startHours + tempEndTime.hours + 1;
+    }
+
     const endTime = `${endHours}:${endMinutes}:${endSeconds}`;
+    console.log(item.start_time);
+    console.log(endTime);
 
     const { data, error } = await supabaseClient
       .from("task_tracking")
       .update({
-        end_time: getCurrentTime(),
+        end_time: endTime,
       })
       .eq("tracking_id", tracking_id);
     if (!error) {
@@ -98,6 +124,14 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
     pause(); // Pause timer
   };
 
+  // convert seconds to hours, minutes, and seconds
+  const convert = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds - hours * 3600) / 60);
+    const secondsLeft = seconds - hours * 3600 - minutes * 60;
+    return { hours, minutes, seconds: secondsLeft };
+  };
+
   return (
     <Flex
       justify={"space-between"}
@@ -113,18 +147,24 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
         {item.entry_notes}
       </Text>
       <Text width={"20%"}>{item.project_tasks.task_types.task_name}</Text>
-      <Timer
-        width={"60px"}
-        seconds={formatTime(seconds + parseInt(item.duration.substring(6, 8)))}
-        minutes={formatTime(minutes + parseInt(item.duration.substring(3, 5)))}
-        hours={formatTime(hours + parseInt(item.duration.substring(0, 2)))}
-      />
-      <TimerStartBtn
-        width={"38px"}
-        startTimer={startTimer}
-        stopTimer={stopTimer}
-        isRunning={isRunning}
-      />
+      {isRunning ? (
+        <Timer
+          width={"60px"}
+          seconds={formatTime(seconds)}
+          minutes={formatTime(minutes)}
+          hours={formatTime(hours)}
+        />
+      ) : (
+        <Text width={"60px"}>{item.duration}</Text>
+      )}
+      {dateCheck1 == dateCheck2 && (
+        <TimerStartBtn
+          width={"38px"}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
+          isRunning={isRunning}
+        />
+      )}
       <EditTimerModal isOpen={isOpen} onClose={onClose} item={item} />
     </Flex>
   );
