@@ -1,5 +1,5 @@
-import { Box, Text, Flex, useDisclosure } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Text, Flex, useDisclosure, Button } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import TimerStartBtn from "./TimerStartBtn";
 import Timer from "./Timer";
@@ -9,6 +9,7 @@ import { formatTime } from "./TimerContainer";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 import EditTimerModal from "./EditTimerModal";
 import DeleteDialog from "../components/DeleteDialog";
+import { resolveMotionValue } from "framer-motion";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -33,7 +34,13 @@ const calcLength = (items) => {
   return sumTime.hours + ":" + sumTime.minutes + ":" + sumTime.seconds;
 };
 
-const TimerRow = ({ item, index, getTaskTracking }) => {
+const TimerRow = ({
+  item,
+  index,
+  getTaskTracking,
+  globalIsRunning,
+  setGlobalIsRunning,
+}) => {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
   const [deleteTaskRecordID, setDeleteTaskRecordID] = useState(null);
@@ -49,23 +56,38 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
   } = useDisclosure();
   const dateCheck1 = new Date(item.date).toLocaleDateString();
   const dateCheck2 = new Date(getCurrentDate()).toLocaleDateString();
-  const stopwatchOffset = new Date();
-  stopwatchOffset.setSeconds(
-    stopwatchOffset.getSeconds() +
-      parseInt(item.duration.substring(0, 2)) * 60 * 60 +
-      parseInt(item.duration.substring(3, 5)) * 60 +
-      parseInt(item.duration.substring(6, 8))
-  );
+  const time = new Date();
 
-  const { start, pause, seconds, minutes, hours, isRunning } = useStopwatch({
-    autoStart: false,
-    precision: "seconds",
-    offsetTimestamp: stopwatchOffset,
-  });
+  const { start, pause, reset, seconds, minutes, hours, isRunning } =
+    useStopwatch({
+      autoStart: false,
+      precision: "seconds",
+    });
+
+  useEffect(() => {
+    time.setSeconds(
+      time.getSeconds() +
+        parseInt(item.duration.substring(0, 2)) * 60 * 60 +
+        parseInt(item.duration.substring(3, 5)) * 60 +
+        parseInt(item.duration.substring(6, 8))
+    );
+    // Offset the timer by the item duration
+    reset(time);
+    // Pause the timer
+    pause();
+  }, [item]);
 
   const startTimer = async () => {
-    // setCurrentTrackingID(null);
-    // setCurrentTrackingID(item.tracking_id);
+    const tempTime = new Date();
+    tempTime.setSeconds(
+      tempTime.getSeconds() +
+        parseInt(hours) * 60 * 60 +
+        parseInt(minutes) * 60 +
+        parseInt(seconds)
+    );
+
+    setCurrentTrackingID(null);
+    setCurrentTrackingID(item.tracking_id);
 
     // Set an interval to update the timer every minute
     const interval = setInterval(() => {
@@ -74,7 +96,8 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
     setIntervalID(interval);
 
     // Start the timer
-    start();
+    setGlobalIsRunning(true);
+    reset(tempTime);  // Allows us to set the offset dynamically
   };
 
   // 4. Make insert requests every minute to update the end_time with the current time using the task_tracking.ID from request 3
@@ -127,6 +150,7 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
     // setIntervalID(null);
 
     // Stop the timer
+    setGlobalIsRunning(false);
     pause(); // Pause timer
 
     setTimeout(() => {
@@ -175,8 +199,8 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
         mr={3}
         onClick={onEditOpen}
         cursor={"pointer"}
-        pointerEvents={isRunning ? "none" : ""}
-        opacity={isRunning ? 0.3 : 1}
+        pointerEvents={isRunning || globalIsRunning ? "none" : ""}
+        opacity={isRunning || globalIsRunning ? 0.3 : 1}
       />
       <Text width={"calc(100% - 20% - 60px - 38px)"} overflow={"hidden"}>
         {item.entry_notes}
@@ -184,22 +208,19 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
       <Text ml={"5%"} width={"15%"}>
         {item.project_tasks.task_types.task_name}
       </Text>
-      {isRunning ? (
-        <Timer
-          width={"60px"}
-          seconds={formatTime(seconds)}
-          minutes={formatTime(minutes)}
-          hours={formatTime(hours)}
-        />
-      ) : (
-        <Text width={"60px"}>{item.duration}</Text>
-      )}
+      <Timer
+        width={"60px"}
+        seconds={formatTime(seconds)}
+        minutes={formatTime(minutes)}
+        hours={formatTime(hours)}
+      />
       {dateCheck1 == dateCheck2 && (
         <TimerStartBtn
           width={"38px"}
           startTimer={startTimer}
           stopTimer={stopTimer}
           isRunning={isRunning}
+          globalIsRunning={globalIsRunning}
         />
       )}
       <EditTimerModal

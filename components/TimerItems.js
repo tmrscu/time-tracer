@@ -42,7 +42,7 @@ const calcLength = (items) => {
   );
 };
 
-const TimerItem = ({ date, items, setTaskTracking, getTaskTracking }) => {
+const TimerItem = ({ date, items, setTaskTracking, getTaskTracking, globalIsRunning, setGlobalIsRunning }) => {
   return (
     <Accordion
       allowMultiple
@@ -87,6 +87,8 @@ const TimerItem = ({ date, items, setTaskTracking, getTaskTracking }) => {
                 key={index}
                 setTaskTracking={setTaskTracking}
                 getTaskTracking={getTaskTracking}
+                globalIsRunning={globalIsRunning}
+                setGlobalIsRunning={setGlobalIsRunning}
               />
             );
           })}
@@ -133,6 +135,8 @@ const renderTimerItems = (props) => {
           key={index}
           setTaskTracking={props.setTaskTracking}
           getTaskTracking={props.getTaskTracking}
+          globalIsRunning={props.globalIsRunning}
+          setGlobalIsRunning={props.setGlobalIsRunning}
         />
       );
     });

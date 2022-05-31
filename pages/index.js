@@ -16,6 +16,7 @@ export default function Home() {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
   const [taskTracking, setTaskTracking] = useState(null);
+  const [globalIsRunning, setGlobalIsRunning] = useState(false);
   
   const { start, reset, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
@@ -58,6 +59,7 @@ export default function Home() {
 
     setIntervalID(interval);
     // Start the timer
+    setGlobalIsRunning(true);
     start();
   };
 
@@ -75,11 +77,12 @@ export default function Home() {
     setProjectID("");
     setTaskTypeID("");
     // stop the timer
+    setGlobalIsRunning(false);
     reset(0, false);
 
     setTimeout(() => {
       getTaskTracking();
-    }, 500);
+    }, 1000);
     
     // update the state. make a request to get the finished tasks
     
@@ -151,6 +154,7 @@ export default function Home() {
           entryNote={entryNote}
           setEntryNote={setEntryNote}
           getTaskTracking={getTaskTracking}
+          globalIsRunning={globalIsRunning}
         />
         <TimerItems
           items={taskTracking}
@@ -162,6 +166,8 @@ export default function Home() {
           hours={hours}
           setTaskTracking={setTaskTracking}
           getTaskTracking={getTaskTracking}
+          globalIsRunning={globalIsRunning}
+          setGlobalIsRunning={setGlobalIsRunning}
         />
       </Container>
     </Box>
