@@ -42,12 +42,7 @@ const calcLength = (items) => {
   );
 };
 
-const TimerItem = ({
-  date,
-  items,
-  setTaskTracking,
-  getTaskTracking,
-}) => {
+const TimerItem = ({ date, items, setTaskTracking, getTaskTracking }) => {
   return (
     <Accordion
       allowMultiple
@@ -117,16 +112,20 @@ const renderTimerItems = (props) => {
       return acc;
     }, {});
 
-    // Sort the array with most recent date at the top
-    props.items.sort(function (a, b) {
+    const tempSorting = Object.entries(groupedItems).sort(function (a, b) {
       // Turn your strings into dates, and then subtract them
       // to get a value that is either negative, positive, or zero.
-      return new Date(b.date) - new Date(a.date);
+      return new Date(b[0]) - new Date(a[0]);
     });
 
+    const sortedItems = tempSorting.reduce((acc, curr) => {
+      acc[curr[0]] = curr[1];
+      return acc;
+    }, {});
+
     // Map over items, and render a TimerItem for each
-    return Object.keys(groupedItems).map((date, index) => {
-      const items = groupedItems[date];
+    return Object.keys(sortedItems).map((date, index) => {
+      const items = sortedItems[date];
       return (
         <TimerItem
           date={date}

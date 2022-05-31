@@ -8,6 +8,7 @@ import { supabaseClient } from "../utils/client";
 import { formatTime } from "./TimerContainer";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 import EditTimerModal from "./EditTimerModal";
+import DeleteDialog from "../components/DeleteDialog";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -35,7 +36,17 @@ const calcLength = (items) => {
 const TimerRow = ({ item, index, getTaskTracking }) => {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [deleteTaskRecordID, setDeleteTaskRecordID] = useState(null);
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
   const dateCheck1 = new Date(item.date).toLocaleDateString();
   const dateCheck2 = new Date(getCurrentDate()).toLocaleDateString();
   const stopwatchOffset = new Date();
@@ -73,28 +84,23 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
     const startMinutes = parseInt(item.start_time.substring(3, 5));
     const startSeconds = parseInt(item.start_time.substring(6, 8));
 
-    const endTimeSeconds = new Date();
-    endTimeSeconds.setSeconds(hours * 60 * 60 + minutes * 60 + seconds);
+    const duration = hours * 60 * 60 + minutes * 60 + seconds;
 
-    const tempEndTime = convert(endTimeSeconds.getSeconds());
+    const tempEndTime = convert(duration);
     let endHours = startHours + tempEndTime.hours;
     let endMinutes = startMinutes + tempEndTime.minutes;
     let endSeconds = startSeconds + tempEndTime.seconds;
 
-    console.log(tempEndTime);
-
-    if (startSeconds + tempEndTime.seconds > 59) {
-      endSeconds = startSeconds + tempEndTime.seconds - 60;
-      endMinutes = startMinutes + tempEndTime.minutes + 1;
+    if (endSeconds > 59) {
+      endSeconds = endSeconds - 60;
+      endMinutes = endMinutes + 1;
     }
-    if (endMinutes + tempEndTime.minutes > 59) {
-      endMinutes = startMinutes + tempEndTime.minutes - 60;
-      endHours = startHours + tempEndTime.hours + 1;
+    if (endMinutes > 59) {
+      endMinutes = endMinutes - 60;
+      endHours = endHours + 1;
     }
 
     const endTime = `${endHours}:${endMinutes}:${endSeconds}`;
-    console.log(item.start_time);
-    console.log(endTime);
 
     const { data, error } = await supabaseClient
       .from("task_tracking")
@@ -122,6 +128,29 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
 
     // Stop the timer
     pause(); // Pause timer
+
+    setTimeout(() => {
+      getTaskTracking();
+    }, 1000);
+  };
+
+  // Delete Task Record
+  const deleteTaskRecord = async () => {
+    const id = deleteTaskRecordID;
+    const { data, error } = await supabaseClient
+      .from("task_tracking")
+      .delete()
+      .eq("tracking_id", id);
+
+    if (!error) {
+      // Refresh the task tracking data
+      getTaskTracking();
+    }
+    setDeleteTaskRecordID(null);
+
+    // Close the Delete Dialog
+    onDeleteClose();
+    onEditClose();
   };
 
   // convert seconds to hours, minutes, and seconds
@@ -142,11 +171,19 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
       _last={{ borderBottom: "none" }}
       py={2}
     >
-      <EditIcon mr={3} onClick={onOpen} cursor={"pointer"} />
+      <EditIcon
+        mr={3}
+        onClick={onEditOpen}
+        cursor={"pointer"}
+        pointerEvents={isRunning ? "none" : ""}
+        opacity={isRunning ? 0.3 : 1}
+      />
       <Text width={"calc(100% - 20% - 60px - 38px)"} overflow={"hidden"}>
         {item.entry_notes}
       </Text>
-      <Text width={"20%"}>{item.project_tasks.task_types.task_name}</Text>
+      <Text ml={"5%"} width={"15%"}>
+        {item.project_tasks.task_types.task_name}
+      </Text>
       {isRunning ? (
         <Timer
           width={"60px"}
@@ -165,7 +202,21 @@ const TimerRow = ({ item, index, getTaskTracking }) => {
           isRunning={isRunning}
         />
       )}
-      <EditTimerModal isOpen={isOpen} onClose={onClose} item={item} />
+      <EditTimerModal
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        item={item}
+        onDeleteOpen={onDeleteOpen}
+        setDeleteTaskRecordID={setDeleteTaskRecordID}
+        getTaskTracking={getTaskTracking}
+      />
+      <DeleteDialog
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
+        title={"Delete Task Record"}
+        type={"Task Record"}
+        deleteFunction={deleteTaskRecord}
+      />
     </Flex>
   );
 };
