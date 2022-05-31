@@ -22,7 +22,7 @@ const TimerContainer = ({
   setTaskTypeID,
   entryNote,
   setEntryNote,
-  getTaskTracking,
+  globalIsRunning,
 }) => {
   return (
     <>
@@ -39,11 +39,12 @@ const TimerContainer = ({
           right={16}
           top={3}
           pointerEvents={
-            entryNote == null||
+            (globalIsRunning == true && isRunning == false) ||
+            entryNote == null ||
             clientID == null ||
             projectID == null ||
             taskTypeID == null ||
-            entryNote == ""||
+            entryNote == "" ||
             clientID == "" ||
             projectID == "" ||
             taskTypeID == ""
@@ -51,11 +52,12 @@ const TimerContainer = ({
               : ""
           }
           opacity={
-            entryNote == null||
+            (globalIsRunning == true && isRunning == false) ||
+            entryNote == null ||
             clientID == null ||
             projectID == null ||
             taskTypeID == null ||
-            entryNote == ""||
+            entryNote == "" ||
             clientID == "" ||
             projectID == "" ||
             taskTypeID == ""

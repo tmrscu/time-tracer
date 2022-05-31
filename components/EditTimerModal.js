@@ -78,8 +78,6 @@ const EditTimerModal = ({
 
   // Submit the form data
   const submitHandler = async (event) => {
-    console.log("running")
-
     event.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -194,8 +192,8 @@ const EditTimerModal = ({
               />
             </FormControl>
 
-            <Flex maxW={64} gap={3}>
-              <FormControl mt={4}>
+            <Flex maxW={550} gap={3}>
+              <FormControl mt={4} mr={10}>
                 <FormLabel>Date</FormLabel>
                 <Input
                   type={"date"}
@@ -204,7 +202,7 @@ const EditTimerModal = ({
                   onChange={(e) => setDateInput(e.target.value)}
                 />
               </FormControl>
-              <FormControl mt={4}>
+              <FormControl w={170} mt={4}>
                 <FormLabel>Hours</FormLabel>
                 <Input
                   type="number"
@@ -213,7 +211,7 @@ const EditTimerModal = ({
                   onChange={(e) => setDurationHours(e.target.value)}
                 />
               </FormControl>
-              <FormControl mt={4}>
+              <FormControl w={170} mt={4}>
                 <FormLabel>Minutes</FormLabel>
                 <Input
                   type="number"
@@ -222,7 +220,7 @@ const EditTimerModal = ({
                   onChange={(e) => setDurationMinutes(e.target.value)}
                 />
               </FormControl>
-              <FormControl mt={4}>
+              <FormControl w={170} mt={4}>
                 <FormLabel>Seconds</FormLabel>
                 <Input
                   type="number"

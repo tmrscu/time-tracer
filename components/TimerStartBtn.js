@@ -2,7 +2,12 @@ import { TriangleDownIcon } from "@chakra-ui/icons";
 import { Flex } from "@chakra-ui/react";
 import { BsStopFill, BsFillPlayFill } from "react-icons/bs";
 
-const TimerStartBtn = ({ startTimer, stopTimer, isRunning }) => {
+const TimerStartBtn = ({
+  startTimer,
+  stopTimer,
+  isRunning,
+  globalIsRunning,
+}) => {
   return (
     <Flex
       bg={isRunning ? "red.400" : "brand.primary"}
@@ -15,6 +20,10 @@ const TimerStartBtn = ({ startTimer, stopTimer, isRunning }) => {
       _hover={{ transform: "scale(1.05)", opacity: "0.8" }}
       transition={"all 0.2s ease"}
       ml={6}
+      pointerEvents={
+        globalIsRunning == true && isRunning == false ? "none" : ""
+      }
+      opacity={globalIsRunning == true && isRunning == false ? 0.3 : 1}
     >
       {isRunning ? (
         <BsStopFill size={30} color="white" onClick={stopTimer} />
