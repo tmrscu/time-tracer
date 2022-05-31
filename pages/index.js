@@ -16,7 +16,7 @@ export default function Home() {
   const [intervalID, setIntervalID] = useState(null);
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
   const [taskTracking, setTaskTracking] = useState(null);
-
+  
   const { start, reset, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
     precision: "seconds",
