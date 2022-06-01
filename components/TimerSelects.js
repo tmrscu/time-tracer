@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabaseClient } from "../utils/client";
 import { Flex, Select } from "@chakra-ui/react";
 
-const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProjectID, setTaskTypeID }) => {
+const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProjectID, setTaskTypeID, isRunning }) => {
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState([]);
   const [taskTypes, setTaskTypes] = useState([]);
@@ -58,6 +58,7 @@ const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProject
         onChange={(e) => {
           setClientID(e.target.value);
         }}
+        disabled={isRunning ? true : false}
       >
         <option key="all" value="">
           Select a Client
@@ -86,6 +87,7 @@ const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProject
         onChange={(e) => {
           setProjectID(e.target.value);
         }}
+        disabled={isRunning ? true : false}
       >
         <option key="all" value="">
           Select a Project
@@ -111,6 +113,7 @@ const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProject
         size="sm"
         value={taskTypeID}
         onChange={(e) => setTaskTypeID(e.target.value)}
+        disabled={isRunning ? true : false}
       >
         <option key="all" value="">
           Select a Task Type

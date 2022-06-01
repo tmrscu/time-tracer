@@ -34,6 +34,7 @@ const TimerContainer = ({
           shadow={"md"}
           value={entryNote}
           onChange={(e) => setEntryNote(e.target.value)}
+          disabled={isRunning ? true : false}
         />
         <InputRightElement
           right={16}
@@ -84,6 +85,7 @@ const TimerContainer = ({
         setClientID={setClientID}
         setProjectID={setProjectID}
         setTaskTypeID={setTaskTypeID}
+        isRunning={isRunning}
       />
     </>
   );
