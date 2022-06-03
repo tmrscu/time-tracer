@@ -2,6 +2,7 @@ import { Input, InputGroup, InputRightElement, Flex } from "@chakra-ui/react";
 import TimerStartBtn from "./TimerStartBtn";
 import Timer from "./Timer";
 import TimerSelects from "./TimerSelects";
+import { BsPlus } from "react-icons/bs";
 
 export const formatTime = (time) => {
   return String(time).padStart(2, "0");
@@ -23,10 +24,29 @@ const TimerContainer = ({
   entryNote,
   setEntryNote,
   globalIsRunning,
+  onNewOpen,
 }) => {
   return (
     <>
       <InputGroup>
+        <Flex
+          bg={"brand.primary"}
+          borderRadius={"full"}
+          p={1}
+          height={"40px"}
+          justify="center"
+          align="center"
+          boxSizing="border-box"
+          cursor="pointer"
+          _hover={{ transform: "scale(1.05)", opacity: "0.8" }}
+          transition={"all 0.2s ease"}
+          mt={13}
+          mr={3}
+          pointerEvents={globalIsRunning ? "none" : ""}
+          opacity={globalIsRunning ? 0.3 : 1}
+        >
+          <BsPlus size={30} color="white" onClick={onNewOpen} />
+        </Flex>
         <Input
           py={8}
           _placeholder={{ color: "gray.600" }}
