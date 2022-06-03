@@ -21,7 +21,7 @@ import NewTaskTypeModal from "../components/NewTaskTypeModal";
 import TaskTypeItem from "../components/TaskTypeItem";
 import EditTaskTypeModal from "../components/EditTaskTypeModal";
 import DeleteDialog from "../components/DeleteDialog";
-import DeleteTypeErrorDialog from "../components/DeleteTypeErrorDialog";
+import DeleteErrorDialog from "../components/DeleteErrorDialog";
 
 // The Task Types Page
 const Tasks = () => {
@@ -32,6 +32,7 @@ const Tasks = () => {
   const [editTaskTypeData, setTaskTypeData] = useState({});
   const [deleteTaskTypeId, setDeleteTaskTypeId] = useState();
   const { user } = useAuth();
+  const errorMessage = "This Task Type cannot be deleted because it is linked to a Project. Please contact the Time Tracer team for more information.";
 
   const getTaskTypeData = async () => {
     let { data: tasks, error } = await supabaseClient
@@ -232,10 +233,11 @@ const Tasks = () => {
         type={"Task Type"}
         deleteFunction={deleteTaskType}
       />
-      <DeleteTypeErrorDialog
+      <DeleteErrorDialog
         isOpen={isErrorOpen}
         onClose={onErrorClose}
         title={"Delete Task Type Error"}
+        errorMessage={errorMessage}
       />
     </Box>
   );

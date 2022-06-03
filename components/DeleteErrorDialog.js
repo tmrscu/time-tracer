@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 // The delete alert dialog used task types that cannot be deleted
-const DeleteTypeErrorDialog = ({ isOpen, onClose, title }) => {
+const DeleteErrorDialog = ({ isOpen, onClose, title, errorMessage }) => {
   return (
     <>
       <AlertDialog isOpen={isOpen} onClose={onClose}>
@@ -19,7 +19,7 @@ const DeleteTypeErrorDialog = ({ isOpen, onClose, title }) => {
               {title}
             </AlertDialogHeader>
             <AlertDialogBody>
-              This Task Type cannot be deleted because it is linked to a Project. Please contact the Time Tracer team for more information.
+              {errorMessage}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button onClick={onClose}>OK</Button>
@@ -31,4 +31,4 @@ const DeleteTypeErrorDialog = ({ isOpen, onClose, title }) => {
   );
 };
 
-export default DeleteTypeErrorDialog;
+export default DeleteErrorDialog;

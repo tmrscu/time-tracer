@@ -9,7 +9,7 @@ import { formatTime } from "./TimerContainer";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
 import EditTimerModal from "./EditTimerModal";
 import DeleteDialog from "../components/DeleteDialog";
-import { resolveMotionValue } from "framer-motion";
+import DeleteErrorDialog from "./DeleteErrorDialog";
 
 // Map over time duration 00:00:00 and return the hours, minutes, and seconds of all added up
 const calcLength = (items) => {
@@ -54,6 +54,12 @@ const TimerRow = ({
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure();
+  const {
+    isOpen: isErrorOpen,
+    onOpen: onErrorOpen,
+    onClose: onErrorClose,
+  } = useDisclosure();
+  const errorMessage = "This Task record cannot be deleted because it is linked to an invoice. Please contact the Time Tracer team for more information.";
   const dateCheck1 = new Date(item.date).toLocaleDateString();
   const dateCheck2 = new Date(getCurrentDate()).toLocaleDateString();
   const time = new Date();
@@ -158,6 +164,28 @@ const TimerRow = ({
     }, 1000);
   };
 
+  // The delete function to handle delete operations
+  const handleRecordDelete = (deleteID) => {
+    // If the task record is associated to an invoice, user can't delete
+    getInvoiceData(deleteID).then((results) => {
+      if (results.length > 0) {
+        onErrorOpen();
+      } else {
+        onDeleteOpen();
+      }
+    });
+  };
+
+  // Get Invoice Data Record
+  const getInvoiceData = async (deleteID) => {
+    const { data, error } = await supabaseClient
+      .from("invoice_data")
+      .select('*')
+      .eq("tracking_id", deleteID);
+
+    return data;
+  }
+
   // Delete Task Record
   const deleteTaskRecord = async () => {
     const id = deleteTaskRecordID;
@@ -227,7 +255,7 @@ const TimerRow = ({
         isOpen={isEditOpen}
         onClose={onEditClose}
         item={item}
-        onDeleteOpen={onDeleteOpen}
+        handleRecordDelete={handleRecordDelete}
         setDeleteTaskRecordID={setDeleteTaskRecordID}
         getTaskTracking={getTaskTracking}
       />
@@ -237,6 +265,12 @@ const TimerRow = ({
         title={"Delete Task Record"}
         type={"Task Record"}
         deleteFunction={deleteTaskRecord}
+      />
+      <DeleteErrorDialog
+        isOpen={isErrorOpen}
+        onClose={onErrorClose}
+        title={"Delete Task Record Error"}
+        errorMessage={errorMessage}
       />
     </Flex>
   );

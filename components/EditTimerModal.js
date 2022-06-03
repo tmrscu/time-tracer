@@ -25,7 +25,7 @@ const EditTimerModal = ({
   isOpen,
   onClose,
   item,
-  onDeleteOpen,
+  handleRecordDelete,
   setDeleteTaskRecordID,
   getTaskTracking,
 }) => {
@@ -128,7 +128,7 @@ const EditTimerModal = ({
   // The delete function to delete a project
   const handleDelete = () => {
     setDeleteTaskRecordID(item.tracking_id);
-    onDeleteOpen();
+    handleRecordDelete(item.tracking_id);
   };
 
   const durationEntry = () => {
