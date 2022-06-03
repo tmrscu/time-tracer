@@ -2,11 +2,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../utils/client";
 import TimerContainer from "../components/TimerContainer";
-import { Box, Container } from "@chakra-ui/react";
+import { Box, Container, useDisclosure } from "@chakra-ui/react";
 import Header from "../components/Header";
 import TimerItems from "../components/TimerItems";
 import { useStopwatch } from "react-timer-hook";
 import { getCurrentTime, getCurrentDate } from "../utils/timeAndDataHelpers";
+import NewTimerModal from "../components/NewTimerModal";
 
 export default function Home() {
   const [clientID, setClientID] = useState("");
@@ -17,7 +18,12 @@ export default function Home() {
   const [currentTrackingID, setCurrentTrackingID] = useState(null);
   const [taskTracking, setTaskTracking] = useState(null);
   const [globalIsRunning, setGlobalIsRunning] = useState(false);
-  
+  const {
+    isOpen: isNewOpen,
+    onOpen: onNewOpen,
+    onClose: onNewClose,
+  } = useDisclosure();
+
   const { start, reset, seconds, minutes, hours, isRunning } = useStopwatch({
     autoStart: false,
     precision: "seconds",
@@ -83,9 +89,9 @@ export default function Home() {
     setTimeout(() => {
       getTaskTracking();
     }, 1000);
-    
+
     // update the state. make a request to get the finished tasks
-    
+
     // NEED TO SET SELECTS BACK TO DEFAULT
   };
 
@@ -155,6 +161,7 @@ export default function Home() {
           setEntryNote={setEntryNote}
           getTaskTracking={getTaskTracking}
           globalIsRunning={globalIsRunning}
+          onNewOpen={onNewOpen}
         />
         <TimerItems
           items={taskTracking}
@@ -168,6 +175,12 @@ export default function Home() {
           getTaskTracking={getTaskTracking}
           globalIsRunning={globalIsRunning}
           setGlobalIsRunning={setGlobalIsRunning}
+        />
+        <NewTimerModal
+          isOpen={isNewOpen}
+          onClose={onNewClose}
+          getTaskTracking={getTaskTracking}
+          setTaskTracking={setTaskTracking}
         />
       </Container>
     </Box>
