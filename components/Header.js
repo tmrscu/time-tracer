@@ -82,7 +82,7 @@ const Header = (props) => {
         display={{ base: isOpen ? "block" : "none", md: "block" }}
         mt={{ base: 4, md: 0 }}
       >
-        <Box display={{ base: "none", md: "block" }}>
+        <Box display={{ base: "none", md: "block" }} >
           <Menu>
             <MenuButton>
               <Avatar
@@ -90,7 +90,7 @@ const Header = (props) => {
                 as={Button}
               />
             </MenuButton>
-            <MenuList color={"brand.text"}>
+            <MenuList color={"brand.text"} zIndex="10">
               <Text ml={3} mb={2} fontSize="sm" color={"gray.500"} border>
                 Logged in as:{" "}
                 <Text
