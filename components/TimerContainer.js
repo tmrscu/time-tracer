@@ -55,6 +55,7 @@ const TimerContainer = ({
           value={entryNote}
           onChange={(e) => setEntryNote(e.target.value)}
           disabled={isRunning ? true : false}
+          pr={"160px"}
         />
         <InputRightElement
           right={16}
