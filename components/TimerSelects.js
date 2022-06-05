@@ -75,6 +75,7 @@ const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProject
           <></>
         )}
       </Select>
+      {console.log(clientID)}
       <Select
         name="projects"
         type="projects"
@@ -82,12 +83,11 @@ const TimerSelects = ({ clientID, projectID, taskTypeID, setClientID, setProject
         required
         mb={6}
         size="sm"
-        isDisabled={clientID == null || clientID == "" ? true : false}
+        isDisabled={clientID == null || clientID == "" || isRunning ? true : false}
         value={projectID}
         onChange={(e) => {
           setProjectID(e.target.value);
         }}
-        disabled={isRunning ? true : false}
       >
         <option key="all" value="">
           Select a Project
