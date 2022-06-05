@@ -34,6 +34,11 @@ const NavMenu = () => {
           <a>Tasks</a>
         </Link>
       </Text>
+      <Text>
+        <Link href={"/invoices"}>
+          <a>Invoices</a>
+        </Link>
+      </Text>
     </Stack>
   );
 };
