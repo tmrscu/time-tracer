@@ -33,6 +33,8 @@ const NewInvoiceModal = ({
   projectID,
   setClientID,
   setProjectID,
+  setInvoices,
+  getInvoiceData,
 }) => {
   // Input States
   const [invoiceType, setInvoiceType] = useState("All");
@@ -67,6 +69,7 @@ const NewInvoiceModal = ({
       start_date: startDate,
       end_date: endDate,
     });
+
     return data[0].invoice_id;
   };
 
@@ -75,7 +78,7 @@ const NewInvoiceModal = ({
       .from("invoice_data")
       .insert(invoiceData);
 
-    console.log("Inserting data");
+    return data;
   };
 
   // Submit the form data
@@ -90,7 +93,7 @@ const NewInvoiceModal = ({
         setIsLoading(false);
         return;
       }
-      
+
       let invoiceData = [];
       // Only filter by date if specifying date range
       if (invoiceType === "Range") {
@@ -115,6 +118,13 @@ const NewInvoiceModal = ({
         setEndDate(invoiceData[invoiceData.length - 1].date);
       }
 
+      // Validate start date, end date selections
+      if (startDate > endDate) {
+        setError("End date cannot be before start date.");
+        setIsLoading(false);
+        return;
+      }
+
       // Check filtered task data
       if (invoiceData.length < 1) {
         setError("No tasks found for this invoice.");
@@ -135,10 +145,16 @@ const NewInvoiceModal = ({
           });
         })
         .then((result) => {
-          insertInvoiceData(result);
+          insertInvoiceData(result).then(() => {
+            // Refresh task tracking
+            setTaskTracking(getTaskTracking());
+            // Refresh invoice data
+            getInvoiceData().then((results) => {
+              setInvoices(results);
+              onClose();
+            });
+          });
         });
-      setTaskTracking(getTaskTracking());
-      onClose();
     } catch (error) {
       setError(error.message);
       setTimeout(() => {
@@ -158,8 +174,7 @@ const NewInvoiceModal = ({
     });
 
     return tempSorting;
-  }
-  
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
