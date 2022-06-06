@@ -105,7 +105,8 @@ const Invoices = () => {
               {invoices.map((invoice, index) => (
                 <Tr fontSize="sm" key={index}>
                   <Td>
-                    <Link href={`/invoice/${invoice.invoice_id}`} target="_blank">
+                    console.log(first)
+                    <Link href={`/invoice/invoice?id=${invoice.invoice_id}`} target="_blank">
                       View Invoice
                     </Link>
                   </Td>
