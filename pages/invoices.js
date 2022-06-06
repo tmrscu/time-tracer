@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import NewInvoiceModal from "../components/NewInvoiceModal";
+import { AddIcon } from "@chakra-ui/icons";
 
 const Invoices = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -81,17 +82,25 @@ const Invoices = () => {
   }, []);
 
   return (
-    <div>
+    <Box bg="#f6f8fc" h="100vh">
       <Header />
       <Container maxW="6xl" pt={5}>
         <Flex justify={"space-between"}>
           <Heading as="h2" size="lg" fontWeight={700}>
             Invoices
           </Heading>
-          <Button onClick={onOpen}>New Invoice</Button>
+          <Button
+            bg="brand.primary"
+            color="white"
+            leftIcon={<AddIcon />}
+            onClick={onOpen}
+            _hover={{ opacity: 0.8 }}
+          >
+            New
+          </Button>
         </Flex>
         {/* create a table showing invoices */}
-        <TableContainer bg="white" borderRadius={5} shadow="lg">
+        <TableContainer mt={12} bg="white" borderRadius={5} shadow="lg">
           <Table variant="simple">
             <Thead bg="brand.primary">
               <Tr>
@@ -131,8 +140,10 @@ const Invoices = () => {
         projectID={projectID}
         setClientID={setClientID}
         setProjectID={setProjectID}
+        setInvoices={setInvoices}
+        getInvoiceData={getInvoiceData}
       />
-    </div>
+    </Box>
   );
 };
 
