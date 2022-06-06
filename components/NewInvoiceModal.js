@@ -13,12 +13,13 @@ import {
   Input,
   ModalFooter,
   Button,
-  Switch,
   Alert,
   AlertIcon,
   Text,
   Select,
   Flex,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
 
 // The new client modal component
@@ -34,13 +35,7 @@ const NewInvoiceModal = ({
   setProjectID,
 }) => {
   // Input States
-  const [companyNameInput, setCompanyNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [firstNameInput, setFirstNameInput] = useState("");
-  const [lastNameInput, setLastNameInput] = useState("");
-  const [contactNumberInput, setContactNumberInput] = useState("");
-  const [statusInput, setStatusInput] = useState(true);
-
+  const [invoiceType, setInvoiceType] = useState("All");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -77,11 +72,11 @@ const NewInvoiceModal = ({
 
   const insertInvoiceData = async (invoiceData) => {
     const { data, error } = await supabaseClient
-    .from("invoice_data")
-    .insert(invoiceData);
+      .from("invoice_data")
+      .insert(invoiceData);
 
-    console.log('Inserting data')
-  }
+    console.log("Inserting data");
+  };
 
   // Submit the form data
   const submitHandler = async (event) => {
@@ -89,37 +84,61 @@ const NewInvoiceModal = ({
     setIsLoading(true);
     setError(null);
     try {
-      const invoiceData = taskTracking.filter((task) => {
-        if (
-          task.date >= startDate &&
-          task.date <= endDate &&
-          task.project_tasks.projects.client_id === parseInt(clientID)
-        ) {
-          return task;
-        }
-      });
+      // Only run if there are existing tasks
+      if (taskTracking.length < 1) {
+        setError("No tasks found for this invoice.");
+        setIsLoading(false);
+        return;
+      }
+      
+      let invoiceData = [];
+      // Only filter by date if specifying date range
+      if (invoiceType === "Range") {
+        invoiceData = taskTracking.filter((task) => {
+          if (
+            task.date >= startDate &&
+            task.date <= endDate &&
+            task.project_tasks.projects.client_id === parseInt(clientID)
+          ) {
+            return task;
+          }
+        });
+      } else {
+        invoiceData = taskTracking.filter((task) => {
+          if (task.project_tasks.projects.client_id === parseInt(clientID)) {
+            return task;
+          }
+        });
+        // Order the data by date
+        invoiceData = sortTasks(invoiceData);
+        setStartDate(invoiceData[0].date);
+        setEndDate(invoiceData[invoiceData.length - 1].date);
+      }
 
-      console.log(invoiceData);
+      // Check filtered task data
       if (invoiceData.length < 1) {
-        setError("No tasks found for this invoice");
+        setError("No tasks found for this invoice.");
         setIsLoading(false);
         return;
       }
 
       // Insert new invoice
-      insertInvoice().then((result) => {
-        // Map over taskTracking and insert into invoice_data where taskTracking
+      insertInvoice()
+        .then((result) => {
+          // Map over taskTracking and insert into invoice_data where taskTracking
 
-        return invoiceData.map((task) => {
-          return {
-            tracking_id: task.tracking_id,
-            invoice_id: result,
-          };
+          return invoiceData.map((task) => {
+            return {
+              tracking_id: task.tracking_id,
+              invoice_id: result,
+            };
+          });
+        })
+        .then((result) => {
+          insertInvoiceData(result);
         });
-      }).then((result) => {
-        insertInvoiceData(result);
-      })
-      setTaskTracking(getTaskTracking())
+      setTaskTracking(getTaskTracking());
+      onClose();
     } catch (error) {
       setError(error.message);
       setTimeout(() => {
@@ -130,6 +149,17 @@ const NewInvoiceModal = ({
       setIsLoading(false);
     }
   };
+
+  const sortTasks = (data) => {
+    const tempSorting = data.sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    return tempSorting;
+  }
+  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -172,27 +202,43 @@ const NewInvoiceModal = ({
               )}
             </Select>
 
-            <Flex gap={12}>
-              <FormControl mt={4}>
-                <FormLabel>Start Date</FormLabel>
-                <Input
-                  required
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Invoicing Type</FormLabel>
+              <RadioGroup
+                required
+                value={invoiceType}
+                onChange={(e) => setInvoiceType(e)}
+              >
+                <Flex gap={10}>
+                  <Radio value={"All"}>All Unbilled Tasks</Radio>
+                  <Radio value={"Range"}>Specified Date Range</Radio>
+                </Flex>
+              </RadioGroup>
+            </FormControl>
 
-              <FormControl mt={4}>
-                <FormLabel>End Date</FormLabel>
-                <Input
-                  required
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </FormControl>
-            </Flex>
+            {invoiceType === "Range" && (
+              <Flex gap={12}>
+                <FormControl mt={4}>
+                  <FormLabel>Start Date</FormLabel>
+                  <Input
+                    required
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>End Date</FormLabel>
+                  <Input
+                    required
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </FormControl>
+              </Flex>
+            )}
           </ModalBody>
 
           <ModalFooter>
