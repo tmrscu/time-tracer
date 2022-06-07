@@ -132,7 +132,7 @@ export default function Home() {
   const getTaskTracking = async () => {
     const { data, error } = await supabaseClient
       .from("task_tracking")
-      .select(`*, project_tasks (*, task_types (*))`)
+      .select(`*, project_tasks (*, task_types (*), projects!projects_project_id_fkey (*, clients!clients_client_id_fkey (*)))`)
       .order("start_time", { ascending: false });
 
     setTaskTracking(data);

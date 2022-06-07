@@ -230,10 +230,13 @@ const TimerRow = ({
         pointerEvents={isRunning || globalIsRunning ? "none" : ""}
         opacity={isRunning || globalIsRunning ? 0.3 : 1}
       />
-      <Text width={"calc(100% - 20% - 60px - 38px)"} overflow={"hidden"}>
+      <Text width={"calc(100% - 30% - 10% - 60px - 38px)"} overflow={"hidden"}>
         {item.entry_notes}
       </Text>
-      <Text ml={"5%"} width={"15%"}>
+      <Text ml={"5%"} textAlign={"right"} width={"30%"}>
+        {item.project_tasks.projects.clients.company} / {item.project_tasks.projects.clients.first_name} {item.project_tasks.projects.clients.last_name}
+      </Text>
+      <Text ml={"5%"} mr={"5%"} textAlign={"right"} width={"10%"}>
         {item.project_tasks.task_types.task_name}
       </Text>
       <Timer
