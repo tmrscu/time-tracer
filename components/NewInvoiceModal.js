@@ -26,13 +26,9 @@ import {
 const NewInvoiceModal = ({
   isOpen,
   onClose,
-  user,
   clients,
-  projects,
   clientID,
-  projectID,
   setClientID,
-  setProjectID,
   setInvoices,
   getInvoiceData,
 }) => {
@@ -112,6 +108,14 @@ const NewInvoiceModal = ({
             return task;
           }
         });
+
+        // Check filtered task data
+        if (invoiceData.length < 1) {
+          setError("No tasks found for this invoice.");
+          setIsLoading(false);
+          return;
+        }
+
         // Order the data by date
         invoiceData = sortTasks(invoiceData);
         setStartDate(invoiceData[0].date);
@@ -218,7 +222,7 @@ const NewInvoiceModal = ({
             </Select>
 
             <FormControl mt={4}>
-              <FormLabel>Invoicing Type</FormLabel>
+              <FormLabel>Invoice Type</FormLabel>
               <RadioGroup
                 required
                 value={invoiceType}

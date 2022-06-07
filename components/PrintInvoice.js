@@ -12,16 +12,15 @@ import {
   GridItem,
   Heading,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
 import React from "react";
 
 // eslint-disable-next-line react/display-name
 const PrintInvoice = React.forwardRef((props, ref) => {
   return (
-    <TableContainer ref={ref} padding={30}>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+    <TableContainer ref={ref} padding={30} bg="#ffffff">
+      <Grid templateColumns="repeat(2, 1fr)">
         <GridItem w="100%">
-          <Heading>INVOICE</Heading>
+          <Heading size="3xl">INVOICE</Heading>
         </GridItem>
         <GridItem w="100%">
           <UnorderedList
@@ -37,6 +36,27 @@ const PrintInvoice = React.forwardRef((props, ref) => {
             <ListItem>Start Date: {props.invoiceData.start_date}</ListItem>
             <ListItem>End Date: {props.invoiceData.end_date}</ListItem>
           </UnorderedList>
+        </GridItem>
+        <GridItem w="100%">
+          <UnorderedList
+            fontWeight={500}
+            fontSize={"16px"}
+            lineHeight={"25px"}
+            color={"#333"}
+            listStyleType={"none"}
+            textAlign={"left"}
+            ml={0}
+            mb={10}
+          >
+            <ListItem>From:</ListItem>
+            <ListItem>
+              {props.profileData.first_name} {props.profileData.last_name}
+            </ListItem>
+            <ListItem>{props.profileData.role}</ListItem>
+            <ListItem>{props.profileData.email}</ListItem>
+          </UnorderedList>
+        </GridItem>
+        <GridItem w="100%">
           <UnorderedList
             fontWeight={500}
             fontSize={"16px"}
@@ -46,6 +66,7 @@ const PrintInvoice = React.forwardRef((props, ref) => {
             textAlign={"right"}
             mb={10}
           >
+            <ListItem>To:</ListItem>
             <ListItem>{props.clientData.company}</ListItem>
             <ListItem>
               {props.clientData.first_name} {props.clientData.last_name}

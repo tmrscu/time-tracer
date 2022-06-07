@@ -46,7 +46,6 @@ function MyApp({ Component, pageProps }) {
         // Get the access token from the query string
         const accessToken = {}
         accessToken = queryString.parse(router.asPath.split('#')[1])
-        console.log(accessToken)
 
         // if the event is signed_in and reset-password is in the URL then redirect to the reset-password page
         // whilst also setting the access_token in the query string
