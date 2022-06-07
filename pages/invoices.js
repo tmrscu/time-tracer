@@ -89,20 +89,22 @@ const Invoices = () => {
     });
   }, []);
 
-  const sortData = (data, sortKey) => {
-    let tempSortOrder; // This fixes the problem with slow state updates
+  const sortData = (data, sortKey, sortType) => {
+    let tempSortOrder = sortOrder; // This fixes the problem with slow state updates
     // Check ascending or descending
-    if (sortKey === sortField) {
-      if (sortOrder === false) {
+    if (sortType === undefined) {
+      if (sortKey === sortField) {
+        if (sortOrder === false) {
+          setSortOrder(true);
+          tempSortOrder = true;
+        } else {
+          setSortOrder(false);
+          tempSortOrder = false;
+        }
+      } else {
         setSortOrder(true);
         tempSortOrder = true;
-      } else {
-        setSortOrder(false);
-        tempSortOrder = false;
       }
-    } else {
-      setSortOrder(true);
-      tempSortOrder = true;
     }
 
     // Sort the data
@@ -137,7 +139,6 @@ const Invoices = () => {
   const filterByClient = (filteredData, filterCheck) => {
     // Avoid filter for empty string
     if (!filterCheck) {
-      console.log(filteredData);
       return filteredData;
     }
 
@@ -347,6 +348,9 @@ const Invoices = () => {
         setProjectID={setProjectID}
         setInvoices={setInvoices}
         getInvoiceData={getInvoiceData}
+        setSortedInvoices={setSortedInvoices}
+        sortField={sortField}
+        sortData={sortData}
       />
     </Box>
   );

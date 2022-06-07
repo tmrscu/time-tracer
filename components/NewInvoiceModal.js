@@ -30,6 +30,9 @@ const NewInvoiceModal = ({
   clientID,
   setClientID,
   setInvoices,
+  setSortedInvoices,
+  sortData,
+  sortField,
   getInvoiceData,
 }) => {
   // Input States
@@ -57,13 +60,13 @@ const NewInvoiceModal = ({
     });
   }, []);
 
-  const insertInvoice = async () => {
+  const insertInvoice = async (startInput, endInput) => {
     setIsLoading(true);
     setError(null);
     const { data, error } = await supabaseClient.from("invoices").insert({
       client_id: clientID,
-      start_date: startDate,
-      end_date: endDate,
+      start_date: startInput,
+      end_date: endInput,
     });
 
     return data[0].invoice_id;
@@ -91,6 +94,8 @@ const NewInvoiceModal = ({
       }
 
       let invoiceData = [];
+      let startDateInput = "";
+      let endDateInput = "";
       // Only filter by date if specifying date range
       if (invoiceType === "Range") {
         invoiceData = taskTracking.filter((task) => {
@@ -102,6 +107,9 @@ const NewInvoiceModal = ({
             return task;
           }
         });
+
+        startDateInput = startDate;
+        endDateInput = endDate;
       } else {
         invoiceData = taskTracking.filter((task) => {
           if (task.project_tasks.projects.client_id === parseInt(clientID)) {
@@ -118,12 +126,12 @@ const NewInvoiceModal = ({
 
         // Order the data by date
         invoiceData = sortTasks(invoiceData);
-        setStartDate(invoiceData[0].date);
-        setEndDate(invoiceData[invoiceData.length - 1].date);
+        startDateInput = invoiceData[0].date;
+        endDateInput = invoiceData[invoiceData.length - 1].date;
       }
 
       // Validate start date, end date selections
-      if (startDate > endDate) {
+      if (startDateInput > endDateInput) {
         setError("End date cannot be before start date.");
         setIsLoading(false);
         return;
@@ -137,7 +145,7 @@ const NewInvoiceModal = ({
       }
 
       // Insert new invoice
-      insertInvoice()
+      insertInvoice(startDateInput, endDateInput)
         .then((result) => {
           // Map over taskTracking and insert into invoice_data where taskTracking
 
@@ -155,6 +163,7 @@ const NewInvoiceModal = ({
             // Refresh invoice data
             getInvoiceData().then((results) => {
               setInvoices(results);
+              setSortedInvoices(sortData(results, sortField, "NEW"));
               onClose();
             });
           });
