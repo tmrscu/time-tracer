@@ -180,7 +180,7 @@ const Profile = ({ user }) => {
   // Return spinner if no data
   if (fname == '') {
     return (
-      <Box display='flex' justifyContent='center'>
+      <Box bg="#f6f8fc" display='flex' justifyContent='center'>
         <Spinner
           thickness='4px'
           speed='0.65s'
